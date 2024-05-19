@@ -1,9 +1,5 @@
 # Doctor’s Appointment Android App
 
-## Schema Diagram
-
-![Database Schema](./schema_diagram.pdf)
-
 # Introduction
 The Doctor's Appointment Android app aims to provide a comprehensive platform facilitating appointment management, personal health record maintenance, and access to healthcare services for both doctors and patients. The app will prioritize a categorized presentation, efficient searching, and implement a robust authentication system, including a thorough verification process for doctors' educational credentials.
 
@@ -38,7 +34,13 @@ The Doctor's Appointment Android app aims to provide a comprehensive platform fa
   - Node.js: As the backend server runtime for handling business logic and data operations.
 - **Database**:
   - MongoDB: A noSQL database management system for remote access.
-  - Realm: A noSQL local database management System. 
+  - Realm: A noSQL local database management System.
+ 
+
+## Schema Diagram
+
+![Database Schema](./schema_diagram.pdf)
+
 
 # Doctor’s Activity
 
