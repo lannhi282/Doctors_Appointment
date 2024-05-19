@@ -6,7 +6,7 @@ The Doctor's Appointment Android app aims to provide a comprehensive platform fa
 # Objectives
 1. Provide a user-friendly platform for doctors and patients to efficiently manage appointments and personal health records.
 2. Ensure the privacy and security of user data through the implementation of a robust authentication system.
-3. Facilitate the availability of healthcare services by including a dedicated section for model pharmacies and diagnostic centers.(Optional)
+3. Facilitate the availability of healthcare services by including a dedicated section for model pharmacies and diagnostic centers. (Optional)
 4. Enhance the app's intelligence and adaptability to provide a personalized experience for each user.
 
 # Scope
@@ -22,24 +22,26 @@ The Doctor's Appointment Android app aims to provide a comprehensive platform fa
 5. Model Pharmacy and Diagnostic Centers: (Optional)
     - The app will include a dedicated section providing information about nearby pharmacies and diagnostic centers. Users can access details such as locations, services offered, and contact information, promoting convenient access to essential healthcare services.
 6. Summary Upload:
-    - Doctors can upload detailed information of appointments directly into the patients' medical histories. This feature streamlines information sharing and ensures that patients have easy access to important details from their healthcare interactions.
+    - Doctors can upload detailed information of appointments directly into the patient's medical histories. This feature streamlines information sharing and ensures that patients have easy access to important details from their healthcare interactions.
 7. Intelligent and Adaptable:
     - The app will prioritize personalization, utilizing intelligent features to adapt to each user's needs. This includes personalized appointment recommendations, reminders, and content suggestions based on user behavior and preferences.
 
 # Development Languages, Tools, and Frameworks
 - **Frontend Development**:
   - Kotlin: A modern programming language for Android app development, chosen for its concise syntax, null safety, and enhanced readability.
+        - Jetpack Compose: A powerful frontend-making tool using Kotlin. This is much more developer-friendly than xml and also more powerful.  
 - **Backend Development**:
   - Firebase: Utilized for authentication and real-time data storage.
   - Node.js: As the backend server runtime for handling business logic and data operations.
+  - Retrofit: For integrating node server. 
 - **Database**:
-  - MongoDB: A noSQL database management system for remote access.
+  - MongoDB: A NoSQL database management system for remote access.
   - Realm: A noSQL local database management System.
  
 
 ## Schema Diagram
 
-![Database Schema](./schema_diagram.pdf)
+![Database Schema](./schema_diagram.png)
 
 
 # Doctor’s Activity
@@ -54,7 +56,7 @@ The Doctor's Appointment Android app aims to provide a comprehensive platform fa
 - Real-time synchronization ensures that doctors have accurate and up-to-date information about their appointments.
 
 ## Summary Upload:
-- After each appointment, doctors can upload summaries directly into the patients' medical histories.
+- After each appointment, doctors can upload summaries directly into the patient's medical histories.
 - This feature streamlines information sharing, allowing patients to access important details from their healthcare interactions.
 
 ## Availability Management:
@@ -97,14 +99,10 @@ The Doctor's Appointment Android app aims to provide a comprehensive platform fa
     - Users receive a verification code on their registered email or phone number.
     - Users enter the received code to complete the registration process.
 2. **Doctor Verification Process** (Optional):
-  - Doctors undergo a separate verification process for their educational qualifications.
-  - Submission of scanned copies of licenses or certifications, including the BM&DC (Bangladesh Medical & Dental Council) registration number, for validation.
+  - Submission of BM&DC (Bangladesh Medical & Dental Council) registration number, for validation.
   - Verification may involve a detailed review by a designated authority (Optional).
-3. **Continuous Monitoring**:
-  - Implement a system to regularly check and update a doctor's license or credentials.
-  - Identifies any changes in a doctor's professional standing over time.
 4. **Legal Agreements**:
-  - Doctors sign agreements attesting to the accuracy of provided information.
+  - Doctors sign agreements attesting to the accuracy of the provided information.
   - Includes clauses about legal consequences for false information.
 
 # Conclusion:
