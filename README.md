@@ -6,7 +6,7 @@
 The Doctor's Appointment Android app aims to provide a comprehensive platform facilitating appointment management, personal health record maintenance, and access to healthcare services for both doctors and patients. The app will prioritize a categorized presentation, efficient searching, and implement a robust authentication system, including a thorough verification process for doctors' educational credentials.
 
 # Video Presentation
-[Youtube](https://youtu.be/PROviviRaeQ?feature=shared)
+[Click](https://www.linkedin.com/posts/minhaj47_last-year-i-developed-my-first-fully-functional-activity-7210659851637506049-cDad?utm_source=combined_share_message&utm_medium=member_android)
 
 # Objectives
 1. Provide a user-friendly platform for doctors and patients to efficiently manage appointments and personal health records.
