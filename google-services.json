@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "620468973951",
-    "project_id": "doctors-appointment-f574e",
-    "storage_bucket": "doctors-appointment-f574e.appspot.com"
+    "project_number": "1050337528663",
+    "project_id": "appointment-bf7d3",
+    "storage_bucket": "appointment-bf7d3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:620468973951:android:30c3b16afec570668d6a4a",
+        "mobilesdk_app_id": "1:1050337528663:android:9e913a4a7a67b608ec8c12",
         "android_client_info": {
           "package_name": "com.example.doctors_appointment"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAe-zKkdrA4oP_u88cSRJD5mQkBkSpriOs"
+          "current_key": "AIzaSyDxoK11Jv2sWoIhkgrqsGnrF1W2hJr0cJg"
         }
       ],
       "services": {

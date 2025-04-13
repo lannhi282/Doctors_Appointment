@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.data.model.Doctor
-import com.example.doctors_appointment.data.repository.MongoRepository
+import com.example.doctors_appointment.data.repository.FirestoreRepository
 import com.example.doctors_appointment.util.ProfileEvent
 import com.example.doctors_appointment.util.UiEvent
 import io.realm.kotlin.ext.realmListOf
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 class DoctorViewModel(
-    val repository: MongoRepository
+    val repository: FirestoreRepository
 ) : ViewModel() {
 
 
@@ -24,7 +24,7 @@ class DoctorViewModel(
     var selectedDate = mutableStateOf(Date())
 
     var newDoctor = Doctor().apply {
-        _id = user._id
+        id = user.id
         name = user.name
         email = user.email
         password = user.password
@@ -33,17 +33,17 @@ class DoctorViewModel(
         gender = user.gender
         address = user.address
         rating = user.rating
-        reviews.addAll(user.reviews) // Adding all elements from user's reviews to newDoctor's reviews
+        reviews = user.reviews // Adding all elements from user's reviews to newDoctor's reviews
         bmdcRegistrationNumber = user.bmdcRegistrationNumber
-        qualifications.addAll(user.qualifications) // Adding all elements from user's qualifications to newDoctor's qualifications
+        qualifications = user.qualifications // Adding all elements from user's qualifications to newDoctor's qualifications
         about = user.about
         medicalSpecialty = user.medicalSpecialty
         profileImage = user.profileImage
-        availabilityStatus.addAll(user.availabilityStatus) // Adding all elements from user's availabilityStatus to newDoctor's availabilityStatus
+        availabilityStatus = user.availabilityStatus // Adding all elements from user's availabilityStatus to newDoctor's availabilityStatus
         consultationFee = user.consultationFee
         experience = user.experience
-        docoument.addAll(user.docoument) // Adding all elements from user's docoument to newDoctor's docoument
-        appointments.addAll(user.appointments) // Adding all elements from user's appointments to newDoctor's appointments
+        docoument = user.docoument // Adding all elements from user's docoument to newDoctor's docoument
+        appointments = user.appointments // Adding all elements from user's appointments to newDoctor's appointments
     }
 
 

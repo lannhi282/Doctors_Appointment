@@ -34,9 +34,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.doctors_appointment.data.repository.MongoRepoImplementation
+import com.example.doctors_appointment.data.repository.FirestoreRepository
+import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
 import com.example.doctors_appointment.util.Screen
-import com.example.doctors_appointment.data.repository.MongoRepository
 import com.example.doctors_appointment.ui.patientsUI.booking.BookSchedule
 import com.example.doctors_appointment.ui.patientsUI.booking.FinalBooking
 import com.example.doctors_appointment.ui.patientsUI.mainHome.MainHome
@@ -59,7 +59,7 @@ data class BottomNavigationItem(
 @Composable
 fun NavBar() {
 
-    val repository: MongoRepository = MongoRepoImplementation
+    val repository: FirestoreRepository = FirestoreRepositoryImpl
 
     // viewModel Initialization
 

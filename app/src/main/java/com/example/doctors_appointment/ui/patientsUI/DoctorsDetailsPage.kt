@@ -136,7 +136,7 @@ fun DoctorsDetailsPage(
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.booking1.withArgs(doctor._id.toHexString()))
+                    navController.navigate(Screen.booking1.withArgs(doctor.id))
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Indigo400,

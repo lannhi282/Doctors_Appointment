@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.doctors_appointment.data.repository.MongoRepoImplementation
+import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.ui.booking.DoctorSchedule
 import com.example.doctors_appointment.ui.patientsUI.BottomNavigationItem
@@ -44,8 +44,7 @@ fun DoctorNavBar() {
 
     // viewModel Initialization
 
-    val repository = MongoRepoImplementation
-
+    val repository = FirestoreRepositoryImpl
 
     val doctorViewModel = DoctorViewModel(repository)
 

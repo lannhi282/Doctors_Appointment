@@ -14,5 +14,11 @@ class MyApp : Application() {
         lateinit var patient: Patient
         lateinit var doctor: Doctor
     }
-
+    override fun onCreate() {
+        super.onCreate()
+        // Khởi tạo biến patient tại đây
+        
+        patient = Patient()
+        doctor = Doctor()
+    }
 }

@@ -10,15 +10,12 @@ import io.realm.kotlin.types.RealmList
 // Appointment (one to one) -> Prescription
 // hence no need of id for prescription
 
-class Prescription: EmbeddedRealmObject{
-    val appointment: Appointment by backlinks(Appointment::prescription)
-    var problem: String = ""
-    var medications: RealmList<String> = realmListOf()
-    var diagnosis: RealmList<String> = realmListOf()
+data class Prescription(
+    var problem: String = "",
+    var medications: List<String> = emptyList(),
+    var diagnosis: List<String> = emptyList(),
     var advice: String = ""
-}
-
-
+)
 
 
 

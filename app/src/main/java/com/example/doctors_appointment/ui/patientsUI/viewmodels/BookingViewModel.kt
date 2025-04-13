@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Doctor
-import com.example.doctors_appointment.data.repository.MongoRepository
+import com.example.doctors_appointment.data.repository.FirestoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -16,7 +16,7 @@ import java.time.ZoneId
 import java.util.Date
 
 class BookingViewModel(
-    private val repository: MongoRepository
+    private val repository: FirestoreRepository
 ) : ViewModel() {
 
     var doctor1 = Doctor()
@@ -26,7 +26,7 @@ class BookingViewModel(
     fun getDoctorFromId(userId: String) {
 
         viewModelScope.launch {
-            doctor1 = repository.getDoctorFromId(userId)!!
+            doctor1 = repository.getDoctorById(userId)!!
         }
     }
 
@@ -108,7 +108,7 @@ class BookingViewModel(
 
     fun onConfirm() {
         viewModelScope.launch {
-            repository.setAppointment(doctor1, user, appointment)
+            repository.setAppointment(doctor1.toString(), user.toString(), appointment)
             appointment = Appointment()
         }
     }

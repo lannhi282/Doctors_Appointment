@@ -194,7 +194,7 @@ fun CategoryDoctorsRow(
 
                 Button(
                     onClick = {
-                        navController.navigate(Screen.doctorsDetails.withArgs(doctor._id.toHexString()))
+                        navController.navigate(Screen.doctorsDetails.withArgs(doctor.id))
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Indigo400,

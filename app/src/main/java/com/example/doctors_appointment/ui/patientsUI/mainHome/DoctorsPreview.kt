@@ -71,7 +71,7 @@ fun DoctorsCard(
             .border(2.dp, Indigo500, RoundedCornerShape(10))
             //.background(Indigo50)
             .clickable {
-                navController.navigate(Screen.doctorsDetails.withArgs(doctor._id.toHexString()))
+                navController.navigate(Screen.doctorsDetails.withArgs(doctor.id))
             }
 
     ){

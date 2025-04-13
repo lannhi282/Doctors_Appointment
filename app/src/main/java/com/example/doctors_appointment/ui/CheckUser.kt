@@ -3,19 +3,24 @@ package com.example.doctors_appointment.ui
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.doctors_appointment.MyApp
-import com.example.doctors_appointment.data.repository.MongoRepoImplementation
+import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
 import com.example.doctors_appointment.ui.patientsUI.BottomNavigationItem
 import com.example.doctors_appointment.ui.patientsUI.NavBar
 import com.example.doctors_appointment.util.Screen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-fun CheckUser(
+
+// Chuyển CheckUser thành suspend function để sử dụng với coroutine
+suspend fun CheckUser(
     email: String,
     password: String,
 ): Boolean {
-    val repository = MongoRepoImplementation
+    val repository = FirestoreRepositoryImpl
 
-    val doctor = repository.auThenticateUserAsDoctor(email, password)
-    val patient = repository.auThenticateUserAsPatient(email, password)
+    // Sử dụng withContext để chuyển qua dispatcher phù hợp với Firebase
+    val doctor = withContext(Dispatchers.IO) { repository.auThenticateUserAsDoctor(email, password) }
+    val patient = withContext(Dispatchers.IO) { repository.auThenticateUserAsPatient(email, password) }
 
     if (doctor != null) {
         MyApp.doctor = doctor
@@ -25,5 +30,8 @@ fun CheckUser(
         MyApp.patient = patient
         println("patient matched")
         return true
-    } else return true
+    } else {
+        println("No match found")
+        return false
+    }
 }
