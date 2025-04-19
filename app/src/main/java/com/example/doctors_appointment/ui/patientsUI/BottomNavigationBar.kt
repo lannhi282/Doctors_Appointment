@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,6 +37,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.doctors_appointment.data.repository.FirestoreRepository
 import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
+import com.example.doctors_appointment.ui.DoctorNavBar
+import com.example.doctors_appointment.ui.HomePage
+import com.example.doctors_appointment.ui.SignIn
+import com.example.doctors_appointment.ui.SignInViewModel
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.ui.patientsUI.booking.BookSchedule
 import com.example.doctors_appointment.ui.patientsUI.booking.FinalBooking
@@ -63,9 +68,10 @@ fun NavBar() {
 
     // viewModel Initialization
 
-    val othersViewModel = OthersViewModel(repository)
+
     val bookingViewModel = BookingViewModel(repository)
     val mainHomeViewModel = MainHomeViewModel(repository)
+    val signInViewModel: SignInViewModel = hiltViewModel()
 
 
 
@@ -102,6 +108,10 @@ fun NavBar() {
     )
 
     val navController = rememberNavController()
+    val othersViewModel = OthersViewModel(
+        repository,
+        navController = navController
+    )
 
     Scaffold(
         bottomBar = {
@@ -115,6 +125,12 @@ fun NavBar() {
         ){
             composable(Screen.mainHome.route){
                 MainHome(navController = navController, mainHomeViewModel = mainHomeViewModel)
+            }
+            composable(Screen.signIn.route){
+                SignIn(navController = navController, signInViewModel = signInViewModel)
+            }
+            composable(Screen.doctorNavBar.route){
+                DoctorNavBar()
             }
 
             composable(Screen.doctors.route){
@@ -138,9 +154,9 @@ fun NavBar() {
                         nullable = true
                     }
                 )
-                ){ entry ->
+            ){ entry ->
                 entry.arguments?.getString("doctorId")?.let {
-                    it1 -> DoctorsDetailsPage(navController = navController, doctorId = it1, othersViewModel)
+                        it1 -> DoctorsDetailsPage(navController = navController, doctorId = it1, othersViewModel)
                 }
             }
 
@@ -154,7 +170,7 @@ fun NavBar() {
                     }
                 )
             ){entry ->
-                 CatagoryDoctorsPage(navController = navController, category =  entry.arguments?.getString("category"), othersViewModel)
+                CatagoryDoctorsPage(navController = navController, category =  entry.arguments?.getString("category"), othersViewModel)
             }
 
             composable(
@@ -199,7 +215,7 @@ fun BottomBar(navController: NavController, items: List<BottomNavigationItem>) {
         contentColor = Indigo900,
         tonalElevation = 5.dp,
 
-    ){
+        ){
         items.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = selectedItemIndex == index,

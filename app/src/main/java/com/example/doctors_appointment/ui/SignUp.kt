@@ -101,7 +101,7 @@ fun SignUp(
         )
         TextButton(
             onClick = {
-                      navController.popBackStack()
+                navController.popBackStack()
             },
             modifier = Modifier
                 .width(80.dp)

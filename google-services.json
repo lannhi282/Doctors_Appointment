@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1050337528663",
+    "firebase_url": "https://appointment-bf7d3-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "appointment-bf7d3",
     "storage_bucket": "appointment-bf7d3.firebasestorage.app"
   },

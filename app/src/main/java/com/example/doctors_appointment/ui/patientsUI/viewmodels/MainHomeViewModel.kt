@@ -12,6 +12,8 @@ import com.example.doctors_appointment.data.repository.FirestoreRepository
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,12 +21,20 @@ class MainHomeViewModel(
     private val repository: FirestoreRepository
 ) : ViewModel() {
 
-    var doctors = mutableStateOf(emptyList<Doctor>())
+//    var doctors = mutableStateOf(emptyList<Doctor>())
+private val _doctors = MutableStateFlow<List<Doctor>>(emptyList())
+    val doctors = _doctors.asStateFlow()
     var patient = MyApp.patient
 
     init {
         viewModelScope.launch {
-            doctors.value = repository.getAllDoctors()
+            _doctors.value = repository.getAllDoctors()
         }
     }
+    fun loadDoctors() {
+        viewModelScope.launch {
+            _doctors.value = repository.getAllDoctors()
+        }
+    }
+
 }

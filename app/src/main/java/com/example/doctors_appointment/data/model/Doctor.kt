@@ -24,6 +24,8 @@ data class Doctor(
     var medicalSpecialty: String = "",
     var profileImage: String = "",
     var availabilityStatus: List<Boolean> = List(6000) { true },
+//    var availabilityStatus: List<Boolean> = List(100) { true },
+
     var consultationFee: Double = 0.0,
     var experience: Int = 0,
     var docoument: List<String> = emptyList(),

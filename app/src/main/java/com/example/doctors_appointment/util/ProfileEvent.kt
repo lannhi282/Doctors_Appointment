@@ -1,5 +1,7 @@
 package com.example.doctors_appointment.util
 
+import com.example.doctors_appointment.data.model.Appointment
+
 sealed class ProfileEvent {
     data class EditName(val name: String) : ProfileEvent()
     data class EditEmail(val email: String) : ProfileEvent()
@@ -15,5 +17,7 @@ sealed class ProfileEvent {
     data class AddQualification(val qualification: String) : ProfileEvent()
     data class EditExperience(val experience: Int) : ProfileEvent()
     data class EditAddress(val address: String) : ProfileEvent()
+    data class EditMedicalHis(val medicalHis: List<Appointment>): ProfileEvent()
+
     object OnSave : ProfileEvent()
 }

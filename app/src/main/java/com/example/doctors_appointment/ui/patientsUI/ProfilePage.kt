@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -48,9 +49,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.doctors_appointment.MyApp
+import com.example.doctors_appointment.MyApp.Companion.patient
 import com.example.doctors_appointment.R
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Patient
+import com.example.doctors_appointment.data.model.Prescription
+import com.example.doctors_appointment.ui.SignIn
 import com.example.doctors_appointment.ui.patientsUI.mainHome.RoundImage
 import com.example.doctors_appointment.ui.patientsUI.mainHome.fontInria
 import com.example.doctors_appointment.ui.theme.Indigo200
@@ -59,6 +63,8 @@ import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
 import com.example.doctors_appointment.util.ProfileEvent
+import java.util.UUID
+import kotlin.math.sign
 
 @Composable
 fun ProfilePage(
@@ -184,16 +190,90 @@ fun ProfilePage(
                         )
                     }
                 } else Profile(othersViewModel.user)
-                
+// Medical history ====
+//                Spacer(modifier = Modifier.height(10.dp))
+//
+//                var problem by remember { mutableStateOf("") }
+//                var diagnosis by remember { mutableStateOf("") }
+//                var medications by remember { mutableStateOf("") }
+//                var advice by remember { mutableStateOf("") }
+//
+//                Text("Add New Medical Record", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = fontInria)
+//
+//                OutlinedTextField(
+//                    value = problem,
+//                    onValueChange = { problem = it },
+//                    label = { Text("Problem", fontFamily = fontInria) },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//
+//                OutlinedTextField(
+//                    value = diagnosis,
+//                    onValueChange = { diagnosis = it },
+//                    label = { Text("Diagnosis (comma separated)", fontFamily = fontInria) },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//
+//                OutlinedTextField(
+//                    value = medications,
+//                    onValueChange = { medications = it },
+//                    label = { Text("Medications (comma separated)", fontFamily = fontInria) },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//
+//                OutlinedTextField(
+//                    value = advice,
+//                    onValueChange = { advice = it },
+//                    label = { Text("Advice", fontFamily = fontInria) },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//
+//                Button(
+//                    onClick = {
+//                        val newAppointment = Appointment(
+//                            id = UUID.randomUUID().toString(),
+//                            appointmentDate = System.currentTimeMillis(), // hoặc dùng thời gian từ input người dùng
+//                            prescription = Prescription(
+//                                problem = "Đau đầu",
+//                                diagnosis = listOf("Thiếu ngủ", "Stress"),
+//                                medications = listOf("Paracetamol 500mg", "Vitamin B"),
+//                                advice = "Nghỉ ngơi hợp lý và uống đủ nước"
+//                            )
+//                        )
+//                        val updatedList = patient.medicalHistory.toMutableList().apply {
+//                            add(newAppointment)
+//                        }
+//                        othersViewModel.OnEvent(ProfileEvent.EditMedicalHis(updatedList))
+//                        // clear input fields if needed
+//                        problem = ""
+//                        diagnosis = ""
+//                        medications = ""
+//                        advice = ""
+//                    },
+//                    modifier = Modifier.padding(top = 8.dp)
+//                ) {
+//                    Text("Add Record", fontFamily = fontInria)
+//                }
+//                =====
+
                 Spacer(modifier = Modifier.height(7.dp))
-                
-                Text(
-                    text = "Medical History:",
-                    fontSize = 25.sp,
-                    fontFamily = fontInria,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+
+                // Logout Button
+                OutlinedButton(
+                    onClick = {
+                        othersViewModel.signout()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = "Logout",
+                        fontSize = 20.sp,
+                        fontFamily = fontInria,
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(7.dp))
 
@@ -207,7 +287,7 @@ fun ProfilePage(
 
 
 }
-
+//UI edit profile
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfile(
@@ -263,6 +343,7 @@ fun EditProfile(
             Spacer(modifier = Modifier.height(5.dp))
 
             var filledWeight by remember {
+                mutableStateOf(patient.weight.toString())
                 mutableStateOf(patient.weight.toString())
             }
 
@@ -350,6 +431,38 @@ fun EditProfile(
                 }
             }
 
+//            Date of Birth
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            var filledDoB by remember {
+                mutableStateOf(patient.dateOfBirth)
+            }
+            OutlinedTextField(
+
+                value = filledDoB,
+                onValueChange = { newText ->
+                    filledDoB = newText
+
+                    // Kiểm tra định dạng dd/MM/yyyy
+                    val datePattern = Regex("""^\d{2}/\d{2}/\d{4}$""")
+                    if (datePattern.matches(newText)) {
+                        othersViewModel.OnEvent(ProfileEvent.EditDoT(newText))
+                    }
+                },
+                label = {
+                    Text(
+                        text = "Date of Birth",
+                        fontFamily = fontInria,
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent, // Text color
+                    unfocusedContainerColor = Color.Transparent, // Background color
+//                    focusedIndicatorColor = Color.Transparent, // No indicator when focused
+//                    unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                ),
+            )
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -458,6 +571,7 @@ fun EditProfile(
 }
 
 
+
 @Composable
 fun Profile(
     patient:Patient,
@@ -527,6 +641,7 @@ fun Profile(
                 fontFamily = fontInria,
                 color = Indigo900
             )
+
 
             Spacer(modifier = Modifier.height(5.dp))
 

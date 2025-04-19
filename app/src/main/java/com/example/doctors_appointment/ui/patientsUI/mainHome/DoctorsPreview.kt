@@ -1,5 +1,6 @@
 package com.example.doctors_appointment.ui.patientsUI.mainHome
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -20,6 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,10 +34,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.doctors_appointment.data.model.Doctor
+import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.MainHomeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 
 
 @Composable
@@ -41,7 +55,8 @@ fun DoctorsPreview(
     mainhomeViewModel: MainHomeViewModel
 ) {
 
-    val availableDoctors = mainhomeViewModel.doctors.value
+//    val availableDoctors = mainhomeViewModel.doctors.value
+    val availableDoctors by mainhomeViewModel.doctors.collectAsState()
 
     Text(
         text = " Doctors",
@@ -50,9 +65,12 @@ fun DoctorsPreview(
         style = MaterialTheme.typography.labelLarge
     )
 
-    LazyRow{
-        items(availableDoctors.size){
-            DoctorsCard(availableDoctors[it], navController)
+    LazyRow {
+        items(
+            items = availableDoctors,
+            key = { it.id } // 👈 BẮT BUỘC
+        ) { doctor ->
+            DoctorsCard(doctor = doctor, navController = navController)
         }
     }
 }
@@ -62,6 +80,7 @@ fun DoctorsCard(
     doctor: Doctor,
     navController: NavController
 ) {
+
     Box(
         modifier = Modifier
             .height(200.dp)
@@ -121,27 +140,48 @@ fun DoctorsCard(
                 color = Indigo900
             )
 
-            // Displaying stars
+            // ⭐ Displaying clickable stars
+            // 1. Dùng state để phản hồi UI ngay
+            var ratingState by remember { mutableStateOf(doctor.rating) }
 
-            val stars = generateStars(doctor.rating)
+            // 2. Nếu doctor.rating thay đổi (do Firebase realtime), cập nhật lại state
+            LaunchedEffect(doctor.rating) {
+                ratingState = doctor.rating
+            }
+
+            val stars = generateStars(ratingState)
 
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                stars.forEach { starIcon ->
+                stars.forEachIndexed { index, starIcon ->
                     Icon(
                         imageVector = starIcon,
                         contentDescription = null,
                         tint = Indigo900,
-                        modifier = Modifier.width(20.dp)
+                        modifier = Modifier
+                            .width(20.dp)
+                            .clickable {
+                                val newRating = index + 1.0
+                                ratingState = newRating // cập nhật UI ngay
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        FirestoreRepositoryImpl.updateDoctorRating(doctor.id, newRating)
+                                    } catch (e: Exception) {
+                                        Log.e("⭐", "Rating update failed: ${e.message}")
+                                    }
+                                }
+                            }
+
                     )
                 }
             }
-
         }
     }
 }
+
 
 @Composable
 fun generateStars(rating: Double): List<ImageVector> {

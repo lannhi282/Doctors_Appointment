@@ -39,44 +39,40 @@ fun CategoryRow(
 ){
     val categories = listOf(
         Category(
-            name = "Heart",
-            icon = painterResource(id = R.drawable.heart_disease)
+            name = "Teeth",
+            icon = painterResource(id = R.drawable.teeth)
         ),
         Category(
-            name = "Eye",
-            icon = painterResource(id = R.drawable.eye)
+            name = "Jaw",
+            icon = painterResource(id = R.drawable.jaw)
         ),
         Category(
-            name = "Kidney",
-            icon = painterResource(id = R.drawable.kidney)
+            name = "Face",
+            icon = painterResource(id = R.drawable.face)
         ),
         Category(
-            name = "Neurology",
-            icon = painterResource(id = R.drawable.neuro)
+            name = "Whitening",
+            icon = painterResource(id = R.drawable.white)
         ),
         Category(
-            name = "Lung",
-            icon = painterResource(id = R.drawable.lungs)
+            name = "Braces",
+            icon = painterResource(id = R.drawable.braces)
         ),
         Category(
-            name = "Dental",
-            icon = painterResource(id = R.drawable.dental)
+            name = "Extraction",
+            icon = painterResource(id = R.drawable.extraction)
         ),
         Category(
-            name = "Mental Health",
-            icon = painterResource(id = R.drawable.mental_health)
+            name = "Filling",
+            icon = painterResource(id = R.drawable.filling)
         ),
         Category(
-            name = "Skin",
-            icon = painterResource(id = R.drawable.skin_disease)
+            name = "Veneer",
+            icon = painterResource(id = R.drawable.veneer)
         ),
         Category(
-            name = "Nose, Ear and Throat",
-            icon = painterResource(id = R.drawable.nose_ear)
-        ),
-        Category(
-            name = "Cancer Disease",
-            icon = painterResource(id = R.drawable.cancer)
+            name = "Implant",
+            icon = painterResource(id = R.drawable.implant)
         )
     )
 

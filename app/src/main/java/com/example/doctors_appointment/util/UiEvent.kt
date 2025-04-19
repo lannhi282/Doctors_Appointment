@@ -1,6 +1,8 @@
 package com.example.doctors_appointment.util
 
 sealed class UiEvent{
+//    data class ShowSnackbar(val message: String) : UiEvent()
+//    object NavigateBack : UiEvent()
     data class Login(
         val email: String,
         val password: String

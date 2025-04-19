@@ -7,6 +7,7 @@ import com.example.doctors_appointment.authentication.AuthUser
 import com.example.doctors_appointment.authentication.ResultState
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -19,8 +20,25 @@ class SignInViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _uiEvents = Channel<UiEvent>()                  // mutable hence made private(so that no one can change it outside the viewmodel) for sending event
-
+    private val auth = FirebaseAuth.getInstance()
     val uiEvents = _uiEvents.receiveAsFlow()                   // immutable to use in the outside viewModel (UI) for collecting the flow
+
+//    init {
+//        if (auth.currentUser != null) {
+//            viewModelScope.launch {
+//                val isPatient = CheckUser()
+//
+//                if (isPatient) {
+//                    sendUiEvent(UiEvent.Navigate(Screen.mainHome.route))
+//                } else {
+//                    sendUiEvent(UiEvent.Navigate(Screen.doctorNavBar.route))
+//                }
+//
+//                //sendUiEvent(UiEvent.Navigate(Screen.checkUser.withArgs(email, password)))
+//
+//            }
+//        }
+//    }
 
     fun OnLoginClick(email: String, password: String) {
 
@@ -33,7 +51,7 @@ class SignInViewModel @Inject constructor(
                 when (result) {
                     is ResultState.Success -> {
 
-                        val isPatient = CheckUser(email = email, password = password)
+                        val isPatient = CheckUser()
 
                         if (isPatient) {
                             sendUiEvent(UiEvent.Navigate(Screen.mainHome.route))

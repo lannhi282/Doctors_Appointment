@@ -87,7 +87,7 @@ fun DoctorsRow(
             .clip(RoundedCornerShape(10))
             .border(2.dp, Indigo500, RoundedCornerShape(10))
             .background(Color.White)
-            //.background(Indigo50)
+        //.background(Indigo50)
 
     ){
 
@@ -148,7 +148,7 @@ fun DoctorsRow(
 
             }
             Column(
-                 horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(.8f)
             ) {
                 Text(

@@ -13,14 +13,16 @@ interface FirestoreRepository{
     suspend fun getAllDoctors(): List<Doctor>
     suspend fun getDoctorById(doctorId: String): Doctor?
     suspend fun getDoctorsByCategory(category: String): List<Doctor>
-    suspend fun auThenticateUserAsDoctor(email: String, password: String): Doctor?
+    suspend fun auThenticateUserAsDoctor(id: String): Doctor?
+    suspend fun updateDoctorRating(doctorId: String, newRating: Double)
+
 
     // PATIENT
     suspend fun insertPatient(patient: Patient)
     suspend fun updatePatient(patient: Patient)
     suspend fun deletePatient(patientId: String)
     suspend fun getPatientById(patientId: String): Patient?
-    suspend fun auThenticateUserAsPatient(email: String, password: String): Patient?
+    suspend fun auThenticateUserAsPatient(id: String): Patient?
 
     // APPOINTMENT
     suspend fun insertAppointment(appointment: Appointment)

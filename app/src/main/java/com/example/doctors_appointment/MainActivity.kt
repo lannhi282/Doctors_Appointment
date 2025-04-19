@@ -18,6 +18,7 @@ import com.example.doctors_appointment.ui.SignUp
 import com.example.doctors_appointment.ui.SignInViewModel
 import com.example.doctors_appointment.ui.SignUpViewModel
 import com.example.doctors_appointment.ui.patientsUI.NavBar
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

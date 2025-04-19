@@ -1,5 +1,6 @@
 package com.example.doctors_appointment.data.repository
 
+import android.util.Log
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Doctor
 import com.example.doctors_appointment.data.model.Patient
@@ -41,10 +42,9 @@ object FirestoreRepositoryImpl : FirestoreRepository {
             .get().await().toObjects(Doctor::class.java)
     }
 
-    override suspend fun auThenticateUserAsDoctor(email: String, password: String): Doctor? {
+    override suspend fun auThenticateUserAsDoctor(id: String): Doctor? {
         val snapshot = db.collection("doctors")
-            .whereEqualTo("email", email)
-            .whereEqualTo("password", password)
+            .whereEqualTo("id", id)
             .get().await() // Đây là phương thức bất đồng bộ
         return snapshot.documents.firstOrNull()?.toObject(Doctor::class.java)
     }
@@ -80,10 +80,9 @@ object FirestoreRepositoryImpl : FirestoreRepository {
         return db.collection("patients").document(patientId).get().await().toObject(Patient::class.java)
     }
 
-    override suspend fun auThenticateUserAsPatient(email: String, password: String): Patient? {
+    override suspend fun auThenticateUserAsPatient(id: String): Patient? {
         val snapshot = db.collection("patients")
-            .whereEqualTo("email", email)
-            .whereEqualTo("password", password)
+            .whereEqualTo("id", id)
             .get().await() // Đây là phương thức bất đồng bộ
         return snapshot.documents.firstOrNull()?.toObject(Patient::class.java)
     }
@@ -116,19 +115,25 @@ object FirestoreRepositoryImpl : FirestoreRepository {
         val field = if (isDoctor) "doctorId" else "patientId"
         val now = System.currentTimeMillis()
 
-        val snapshot = db.collection("appointments")
-            .whereEqualTo(field, userId)
-            .whereGreaterThanOrEqualTo("appointmentDate", now)
-            .get().await()
+        return try {
+            val snapshot = db.collection("appointments")
+                .whereEqualTo(field, userId)
+                .whereGreaterThanOrEqualTo("appointmentDate", now)
+                .get().await()
 
-        if (snapshot.isEmpty) {
-            // In log nếu không có kết quả nào
-            println("🔥 No upcoming appointments found for $field = $userId, currentTime = $now")
-        } else {
-            println("✅ Found ${snapshot.size()} upcoming appointments for $field = $userId")
+
+            if (snapshot.isEmpty) {
+                Log.e(null, "🔥 No upcoming appointments found for $field = $userId, currentTime = $now")
+            } else {
+                println("✅ Found ${snapshot.size()} upcoming appointments for $field = $userId")
+            }
+            Log.d("Firestore", "Snapshot: ${snapshot.documents}") // Sửa Log.e thành Log.d, thêm tag
+            snapshot.toObjects(Appointment::class.java)
+        } catch (e: Exception) {
+            Log.e("FirestoreError", "Failed to get appointments: ${e.message}", e)
+            println("❌ Error fetching appointments for $field = $userId: ${e.message}")
+            emptyList() // Trả về danh sách rỗng thay vì crash
         }
-
-        return snapshot.toObjects(Appointment::class.java)
     }
 
     override suspend fun getPastAppointments(userId: String, isDoctor: Boolean): List<Appointment> {
@@ -142,6 +147,13 @@ object FirestoreRepositoryImpl : FirestoreRepository {
 
     override suspend fun setAppointment(doctorId: String, patientId: String, appointment: Appointment) {
         insertAppointment(appointment.copy(doctorId = doctorId, patientId = patientId))
+    }
+
+    override suspend fun updateDoctorRating(doctorId: String, newRating: Double) {
+        db.collection("doctors")
+            .document(doctorId)
+            .update("rating", newRating)
+            .await()
     }
 
 }
