@@ -14,6 +14,7 @@ import com.example.doctors_appointment.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +22,8 @@ class MainHomeViewModel(
     private val repository: FirestoreRepository
 ) : ViewModel() {
 
-//    var doctors = mutableStateOf(emptyList<Doctor>())
-private val _doctors = MutableStateFlow<List<Doctor>>(emptyList())
+    //    var doctors = mutableStateOf(emptyList<Doctor>())
+    private val _doctors = MutableStateFlow<List<Doctor>>(emptyList())
     val doctors = _doctors.asStateFlow()
     var patient = MyApp.patient
 
@@ -34,6 +35,14 @@ private val _doctors = MutableStateFlow<List<Doctor>>(emptyList())
     fun loadDoctors() {
         viewModelScope.launch {
             _doctors.value = repository.getAllDoctors()
+        }
+    }
+
+    fun updateDoctor(doctor: Doctor) {
+        _doctors.update { currentList ->
+            currentList.map { item ->
+                if (item.id == doctor.id) doctor else item
+            }
         }
     }
 

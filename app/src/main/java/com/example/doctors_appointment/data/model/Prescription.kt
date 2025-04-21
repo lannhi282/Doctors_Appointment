@@ -16,6 +16,3 @@ data class Prescription(
     var diagnosis: List<String> = emptyList(),
     var advice: String = ""
 )
-
-
-

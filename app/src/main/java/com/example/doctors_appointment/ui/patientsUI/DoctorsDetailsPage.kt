@@ -1,4 +1,3 @@
-
 package com.example.doctors_appointment.ui.patientsUI
 
 import androidx.compose.foundation.background
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.outlined.Details
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -209,7 +209,7 @@ fun DoctorsDetailsPage(
         ){
             item{
                 if(selectedTabIndex == 1){
-                    DoctorsDetails(doctor)
+                    DoctorsDetails(doctor, isPatient = true)
                 } else About(doctor)
             }
         }
@@ -222,167 +222,189 @@ fun DoctorsDetailsPage(
 
 @Composable
 fun DoctorsDetails(
-    doctor: Doctor
+    doctor: Doctor,
+    isPatient: Boolean,
+    onSignOut: () -> Unit = {},
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            //.padding(end = 15.dp, bottom = 5.dp, top = 5.dp, start = 10.dp)
-            .clip(RoundedCornerShape(5))
-            .border(2.dp, Indigo500, RoundedCornerShape(5))
-            .background(Color.White),
-        //.background(Indigo50)
-    ){
-
-        Column(
+    Column {
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 15.dp, top = 12.dp, end = 10.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
-        ) {
+                .fillMaxWidth()
+                .padding(10.dp)
+                //.padding(end = 15.dp, bottom = 5.dp, top = 5.dp, start = 10.dp)
+                .clip(RoundedCornerShape(5))
+                .border(2.dp, Indigo500, RoundedCornerShape(5))
+                .background(Color.White),
+            //.background(Indigo50)
+        ){
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 15.dp, top = 12.dp, end = 10.dp, bottom = 8.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
 
 
-            Text(
-                text = "Address:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = doctor.address,
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Contact No:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = doctor.contactNumber,
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Email:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = doctor.email,
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Gender",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = if (doctor.gender == null) {
-                    "Unknown"
-                } else if (doctor.gender == true) {
-                    "Male"
-                } else "Female",
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Qualifications:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            for (item in doctor.qualifications){
                 Text(
-                    text = item,
-                    fontSize = 16.sp,
+                    text = "Address:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = doctor.address,
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Contact No:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = doctor.contactNumber,
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Email:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = doctor.email,
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Gender",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = if (doctor.gender == null) {
+                        "Unknown"
+                    } else if (doctor.gender == true) {
+                        "Male"
+                    } else "Female",
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Qualifications:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                for (item in doctor.qualifications){
+                    Text(
+                        text = item,
+                        fontSize = 16.sp,
+                        fontFamily = fontInria,
+                        color = Indigo900
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Experience:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = doctor.experience.toString(),
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "BMDC Registration No:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = doctor.bmdcRegistrationNumber,
+                    fontSize = 17.sp,
+                    fontFamily = fontInria,
+                    color = Indigo900
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = "Notification:",
+                    fontSize = 19.sp,
+                    fontFamily = fontInria,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = if (doctor.notification == null) "UNKNOWN" else if (doctor.notification == true) "ON" else "OFF",
+                    fontSize = 17.sp,
                     fontFamily = fontInria,
                     color = Indigo900
                 )
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Experience:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = doctor.experience.toString(),
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "BMDC Registration No:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = doctor.bmdcRegistrationNumber,
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Text(
-                text = "Notification:",
-                fontSize = 19.sp,
-                fontFamily = fontInria,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = if (doctor.notification == null) "UNKNOWN" else if (doctor.notification == true) "ON" else "OFF",
-                fontSize = 17.sp,
-                fontFamily = fontInria,
-                color = Indigo900
-            )
         }
+
+        if (!isPatient) {
+            // Logout Button
+            OutlinedButton(
+                onClick = onSignOut,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = "Logout",
+                    fontSize = 20.sp,
+                    fontFamily = fontInria,
+                )
+            }
+        }
+
     }
 
 }

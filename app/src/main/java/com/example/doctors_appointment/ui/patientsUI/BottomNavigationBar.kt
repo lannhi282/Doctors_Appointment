@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,7 +63,7 @@ data class BottomNavigationItem(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavBar() {
+fun NavBar(highNavController: NavHostController) {
 
     val repository: FirestoreRepository = FirestoreRepositoryImpl
 
@@ -129,9 +130,12 @@ fun NavBar() {
             composable(Screen.signIn.route){
                 SignIn(navController = navController, signInViewModel = signInViewModel)
             }
-            composable(Screen.doctorNavBar.route){
-                DoctorNavBar()
-            }
+//            composable(Screen.doctorNavBar.route){
+//                DoctorNavBar(
+//                    othersViewModel = othersViewModel,
+////                    highNavController = highNavController
+//                )
+//            }
 
             composable(Screen.doctors.route){
                 DoctorsPage(navController = navController, othersViewModel = othersViewModel)
@@ -142,7 +146,14 @@ fun NavBar() {
             }
 
             composable(Screen.profile.route){
-                ProfilePage(navController = navController, othersViewModel = othersViewModel)
+                ProfilePage(
+                    navController = navController,
+                    onSignOut = {
+                        othersViewModel.signout()
+                        highNavController.navigate(Screen.signIn.route)
+                    },
+                    othersViewModel = othersViewModel
+                )
             }
 
             composable(

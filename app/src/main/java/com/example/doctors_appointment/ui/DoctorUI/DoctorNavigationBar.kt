@@ -23,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,19 +36,24 @@ import com.example.doctors_appointment.ui.patientsUI.BottomNavigationItem
 import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.DoctorUI.DoctorViewModel
+import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
 import com.example.doctors_appointment.ui_doctor.DoctorAppointmentDetails
 import com.example.doctors_appointment.ui_doctor.PatientProfile
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DoctorNavBar() {
+fun DoctorNavBar(
+    highNavController: NavHostController,
+//    othersViewModel: OthersViewModel
+) {
 
     // viewModel Initialization
 
     val repository = FirestoreRepositoryImpl
 
-    val doctorViewModel = DoctorViewModel(repository)
+    val signInViewModel: SignInViewModel = hiltViewModel()
+
 
 
     val items = listOf(
@@ -69,6 +76,7 @@ fun DoctorNavBar() {
     )
 
     val navController = rememberNavController()
+    val doctorViewModel = DoctorViewModel(repository, navController)
 
     Scaffold(
         bottomBar = {
@@ -80,11 +88,20 @@ fun DoctorNavBar() {
             navController = navController,
             startDestination = Screen.doctorSchedule.route
         ) {
+            composable(Screen.signIn.route){
+                SignIn(navController = navController, signInViewModel = signInViewModel)
+            }
             composable(Screen.doctorSchedule.route) {
                 DoctorSchedule(navController = navController, doctorViewModel = doctorViewModel)
             }
             composable(Screen.doctorProfile.route) {
-                DoctorProfilePage(doctorViewModel = doctorViewModel)
+                DoctorProfilePage(
+                    onSignOut = {
+                        doctorViewModel.signOut()
+                        highNavController.navigate(Screen.signIn.route)
+                    },
+                    doctorViewModel = doctorViewModel
+                )
             }
 
             composable(Screen.doctorAppointmentDetails.route) {

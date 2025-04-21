@@ -75,8 +75,11 @@ import com.example.doctors_appointment.ui.theme.Indigo400
 import com.example.doctors_appointment.util.ProfileEvent
 import com.example.doctors_appointment.util.Screen
 
+import com.google.firebase.auth.FirebaseAuth
+
 @Composable
 fun DoctorProfilePage(
+    onSignOut: () -> Unit,
     doctorViewModel: DoctorViewModel
 ) {
 
@@ -244,7 +247,10 @@ fun DoctorProfilePage(
 
                 if (onEdit) {
                     if (selectedTabIndex == 1) {
-                        EditDoctorDetails(doctorViewModel.user, doctorViewModel)
+                        EditDoctorDetails(
+                            doctorViewModel.user,
+                            doctorViewModel
+                        )
                     } else {
                         editAbout(doctor = doctorViewModel.user, doctorViewModel = doctorViewModel)
                     }
@@ -262,7 +268,11 @@ fun DoctorProfilePage(
                     }
                 } else {
                     if (selectedTabIndex == 1) {
-                        com.example.doctors_appointment.ui.patientsUI.DoctorsDetails(doctorViewModel.user)
+                        com.example.doctors_appointment.ui.patientsUI.DoctorsDetails(
+                            doctorViewModel.user,
+                            isPatient = false,
+                            onSignOut = onSignOut
+                        )
                     } else com.example.doctors_appointment.ui.patientsUI.About(doctorViewModel.user)
                 }
 

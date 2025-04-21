@@ -70,7 +70,14 @@ fun DoctorsPreview(
             items = availableDoctors,
             key = { it.id } // 👈 BẮT BUỘC
         ) { doctor ->
-            DoctorsCard(doctor = doctor, navController = navController)
+            DoctorsCard(
+                doctor = doctor,
+                updateRating = {
+                    val afterUpdated = doctor.copy(rating = it)
+                    mainhomeViewModel.updateDoctor(afterUpdated)
+                },
+                navController = navController
+            )
         }
     }
 }
@@ -78,6 +85,7 @@ fun DoctorsPreview(
 @Composable
 fun DoctorsCard(
     doctor: Doctor,
+    updateRating: (Double) -> Unit,
     navController: NavController
 ) {
 
@@ -165,7 +173,7 @@ fun DoctorsCard(
                             .clickable {
                                 val newRating = index + 1.0
                                 ratingState = newRating // cập nhật UI ngay
-
+                                updateRating(newRating)
                                 CoroutineScope(Dispatchers.IO).launch {
                                     try {
                                         FirestoreRepositoryImpl.updateDoctorRating(doctor.id, newRating)
@@ -198,4 +206,3 @@ fun generateStars(rating: Double): List<ImageVector> {
         }
     }
 }
-

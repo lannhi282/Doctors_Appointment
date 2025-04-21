@@ -108,7 +108,7 @@ fun RoundImage(
     modifier: Modifier = Modifier.height(40.dp)
 ){
     Image(
-        painter = image, 
+        painter = image,
         contentDescription = null,
         modifier = modifier
             .aspectRatio(1f, matchHeightConstraintsFirst = true)

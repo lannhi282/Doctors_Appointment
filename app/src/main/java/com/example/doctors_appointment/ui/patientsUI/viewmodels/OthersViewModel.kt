@@ -63,7 +63,7 @@ class OthersViewModel(
             is ProfileEvent.EditDoT -> user.dateOfBirth = event.dot
             is ProfileEvent.EditNumber -> user.contactNumber = event.contact
             is ProfileEvent.EditNotificationStatus -> user.notification = event.notificationStatus
-            is ProfileEvent.EditMedicalHis -> user.medicalHistory = event.medicalHis
+//            is ProfileEvent.EditMedicalHis -> user.medicalHistory = event.medicalHis
 
             is ProfileEvent.OnSave -> {
                 viewModelScope.launch {

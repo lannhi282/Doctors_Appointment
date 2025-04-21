@@ -3,11 +3,17 @@ package com.example.doctors_appointment.ui.DoctorUI
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.data.model.Doctor
+import com.example.doctors_appointment.data.model.Patient
 import com.example.doctors_appointment.data.repository.FirestoreRepository
+import com.example.doctors_appointment.data.repository.FirestoreRepositoryImpl
 import com.example.doctors_appointment.util.ProfileEvent
+import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
+import com.google.firebase.auth.FirebaseAuth
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.channels.Channel
@@ -16,12 +22,26 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 class DoctorViewModel(
-    val repository: FirestoreRepository
+    val repository: FirestoreRepositoryImpl,
+    val navController: NavController
 ) : ViewModel() {
-
+    private val auth = FirebaseAuth.getInstance()
 
     var user = MyApp.doctor
     var selectedDate = mutableStateOf(Date())
+    val defaultPatient = Patient().apply {
+        name = "John Doe"
+        email = "john.doe@example.com"
+        password = "password123"
+        contactNumber = "1234567890" // Example contact number
+        notification = true // Example notification setting
+        height = 175.5 // Example height in centimeters
+        weight = 70.0 // Example weight in kilograms
+        gender = true // Example gender (true for male, false for female)
+        dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
+        profileImage = "path_to_image.jpg" // Example path to profile image
+    }
+    var patientList = mutableStateOf<List<Patient>>(listOf())
 
     var newDoctor = Doctor().apply {
         id = user.id
@@ -110,6 +130,38 @@ class DoctorViewModel(
         }
     }
 
+    init {
+//        val userId = auth.currentUser?.uid?:""
+//        loadPatientById(userId)
+    }
+
+//Lay thông tin của bệnh nhân
+//    fun loadPatient(time :) {
+//        viewModelScope.launch {
+//            try {
+////                val result = repository.getPatientById(patientId)
+////                patientState.value = result?: defaultPatient
+//                val appointmentList = getAppointmentsByTime(time)
+//                appointmentList.forEach { item ->
+//                    val patientId = item.patientId
+//                    val patient = getPatientById(patientId)
+//                    patientList.map
+//                }
+//            } catch (e: Exception) {
+//                println("Error fetching patient: ${e.message}")
+//            }
+//        }
+//    }
+
+    fun signout(navController: NavController) {
+        FirebaseAuth.getInstance().signOut()
+        MyApp.doctor = Doctor() // Reset
+        navController.navigate(Screen.signIn.route) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
     private fun sendUiEvent(uiEvent: UiEvent) {  // sends flow throw the channel
         viewModelScope.launch {   // this binds the lifecycle of coroutine with our viewmodel
             _uiEvents.send(uiEvent)
@@ -157,5 +209,10 @@ class DoctorViewModel(
 
             else -> -1.0
         }
+    }
+
+    fun signOut() {
+        auth.signOut()
+        navController.navigate(Screen.signIn.route)
     }
 }

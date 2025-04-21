@@ -51,11 +51,13 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable(Screen.mainHome.route) {
-                    NavBar()
+                    NavBar(highNavController = navController)
                 }
 
                 composable(Screen.doctorNavBar.route) {
-                    DoctorNavBar()
+                    DoctorNavBar(
+                        highNavController = navController
+                    )
                 }
 //
 //                composable(Screen.profile.route){

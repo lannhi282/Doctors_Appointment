@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Password
@@ -18,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -47,6 +49,11 @@ import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.ui.theme.Indigo100
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.util.UiEvent
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.VisualTransformation
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -103,15 +110,15 @@ fun SignIn(
         )
 
         Spacer(
-            modifier = Modifier.height(70.dp)
+            modifier = Modifier.height(60.dp)
         )
 
         Text(
             text = "Sign in to continue",
             fontFamily = fontInria,
             fontSize = 13.sp,
-            modifier = Modifier.alpha(0.5f),
-            fontWeight = FontWeight.Bold,
+            modifier = Modifier.alpha(1f),
+            fontWeight = FontWeight.Medium,
         )
         Spacer(
             modifier = Modifier.height(20.dp)
@@ -122,33 +129,30 @@ fun SignIn(
             // Nhập sẵn email ở đây luôn
         }
         OutlinedTextField(
-            value = filledMail ,
-            onValueChange = {
-                filledMail = it
-            },
-            label = {
-                Text(text = "Enter Email address: ")
-            },
+            value = filledMail,
+            onValueChange = { filledMail = it },
+            label = { Text("Enter Email address:") },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Email,
-                    contentDescription = "Email" )
+                    contentDescription = "Email"
+                )
             },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Person,
-                    contentDescription = "user" )
+                    contentDescription = "User"
+                )
             },
-//            textStyle = LocalTextStyle.current.copy(
-//                textAlign = TextAlign.Center
-//            ),
-//            suffix = {
-//                     Text(text = "@gmail.com")
-//            },
-//            supportingText = {
-//                Text(text = "*required")
-//            },
-            isError = false
+            shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Indigo900,     // ✅ Khi focus
+                unfocusedBorderColor = Indigo100,   // ✅ Khi chưa focus
+                cursorColor = Indigo900,
+                focusedLabelColor = Indigo900
+            ),
+            isError = false, // ✅ Để false nếu không báo lỗi
+            modifier = Modifier.width(300.dp)
         )
 
         Spacer(
@@ -156,26 +160,41 @@ fun SignIn(
         )
 
 
-        var filledPass by remember {
-            mutableStateOf("lamlt123@")
-        }
+        var filledPass by remember { mutableStateOf("lamlt123@") }
+        var isPasswordVisible by remember { mutableStateOf(false) }
+
         OutlinedTextField(
             value = filledPass,
-            onValueChange = {
-                filledPass = it
-            },
-            label = {
-                Text(text = "Enter your Password: ")
-            },
+            onValueChange = { filledPass = it },
+            label = { Text("Enter your Password:") },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Password,
-                    contentDescription = "Pass"
+                    contentDescription = "Password Icon"
                 )
-            }, visualTransformation = PasswordVisualTransformation()
-//            textStyle = LocalTextStyle.current.copy(
-//                textAlign = TextAlign.Center
-//            )
+            },
+            trailingIcon = {
+                val visibilityIcon = if (isPasswordVisible)
+                    Icons.Filled.VisibilityOff
+                else
+                    Icons.Filled.Visibility
+
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(
+                        imageVector = visibilityIcon,
+                        contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            shape = RoundedCornerShape(14.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Indigo900,
+                unfocusedBorderColor = Indigo100,
+                cursorColor = Indigo900,
+                focusedLabelColor = Indigo900
+            ),
+            modifier = Modifier.width(300.dp)
         )
         Spacer(
             modifier = Modifier.height(60.dp)
@@ -191,6 +210,8 @@ fun SignIn(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Indigo100,
                 contentColor = Indigo900
+//                containerColor = Indigo900, // màu đậm hơn
+//                contentColor = Color.White
             )
         ) {
             Text(
@@ -205,12 +226,14 @@ fun SignIn(
             modifier = Modifier.height(25.dp)
         )
 
+
+
         Text(
             text = "Don't Have an Account?",
             fontFamily = fontInria,
             fontSize = 12.sp,
-            modifier = Modifier.alpha(0.5f),
-            fontWeight = FontWeight.Bold,
+            modifier = Modifier.alpha(1f),
+            fontWeight = FontWeight.Medium,
         )
         TextButton(
             onClick = {
@@ -224,8 +247,8 @@ fun SignIn(
             Text(text = "Sign Up",
                 fontFamily = fontInria,
                 fontSize = 12.sp,
-                modifier = Modifier.alpha(0.5f),
-                fontWeight = FontWeight.Bold,
+                modifier = Modifier.alpha(1f),
+                fontWeight = FontWeight.Medium,
             )
         }
     }
