@@ -1,5 +1,6 @@
 package com.example.doctors_appointment.ui.patientsUI.viewmodels
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -77,9 +78,32 @@ class OthersViewModel(
 
     fun updateProfileImage(imageUri: String) {
         viewModelScope.launch {
-            user.profileImage = imageUri
-            repository.updatePatient(user)
-            MyApp.patient = user
+            try {
+                val fileUri = Uri.parse(imageUri)
+                val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().reference
+                val avatarRef = storageRef.child("avatars/${user.id}.jpg")
+
+                // Upload file lên Firebase Storage
+                val uploadTask = avatarRef.putFile(fileUri)
+                uploadTask.addOnSuccessListener {
+                    avatarRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        val url = downloadUri.toString()
+
+                        // Cập nhật ảnh đại diện trong user
+                        user.profileImage = url
+
+                        // Cập nhật lên Firestore
+                        viewModelScope.launch {
+                            repository.updatePatient(user)
+                            MyApp.patient = user
+                        }
+                    }
+                }.addOnFailureListener { e ->
+                    Log.e("🔥 Upload error", "Upload thất bại: ${e.message}")
+                }
+            } catch (e: Exception) {
+                Log.e("🔥 Storage error", "Lỗi xử lý ảnh: ${e.message}")
+            }
         }
     }
 
