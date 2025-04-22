@@ -32,6 +32,7 @@ import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -171,8 +172,16 @@ fun AppointmentRow(
                 .padding(start = 15.dp, top = 12.dp, end = 12.dp, bottom = 10.dp)
         ) {
             Text(
-                text = appointment.appointmentDate?.let { convertLongToDateString(it) }
-                    ?: "Time is not confirmed yet",
+                text = appointment.appointmentDate?.let {
+                    val calendar = Calendar.getInstance().apply {
+                        timeInMillis = it
+                    }
+                    val date = convertLongToDateString(it)
+                    val time = String.format("%02d:%02d",
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE))
+                    "$date at $time"
+                } ?: "Time is not confirmed yet",
                 fontSize = 13.sp,
                 fontFamily = fontInria,
                 fontWeight = FontWeight.Bold,

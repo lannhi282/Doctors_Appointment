@@ -137,15 +137,15 @@ fun PatientProfile(
 ) {
 
     val patient = Patient().apply {
-        name = "John Doe"
-        email = "john.doe@example.com"
-        password = "password123"
+        name = "lam"
+        email = "lam@gmail.com"
+        password = "lamlt123@"
         contactNumber = "1234567890" // Example contact number
         notification = true // Example notification setting
-        height = 175.5 // Example height in centimeters
-        weight = 70.0 // Example weight in kilograms
+        height = 175.0 // Example height in centimeters
+        weight = 56.0 // Example weight in kilograms
         gender = true // Example gender (true for male, false for female)
-        dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
+        dateOfBirth = "2005-11-18" // Example date of birth in yyyy-MM-dd format
         profileImage = "path_to_image.jpg" // Example path to profile image
     }
 

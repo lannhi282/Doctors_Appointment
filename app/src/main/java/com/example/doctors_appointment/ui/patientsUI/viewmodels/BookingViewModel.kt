@@ -14,6 +14,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.util.Calendar
 import java.util.Date
 
 class BookingViewModel(
@@ -49,15 +50,18 @@ class BookingViewModel(
     }
 
     fun getAppointmentTime(slotNo: Int): Long {
-        val day = slotNo / 36
         val time = getTime(slotNo % 36)
+        val hour = time.toInt()
+        val minute = ((time - hour) * 100).toInt()
 
-        val minutes = if (hasFraction(time)) 30 else 0
+        val calendar = Calendar.getInstance()
+        calendar.time = selectedDate.value
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
 
-        val tomorrow = LocalDate.now().plusDays(day.toLong())
-        val localTime = LocalDateTime.of(tomorrow, LocalTime.of(time.toInt(), minutes))
-
-        return Date.from(localTime.atZone(ZoneId.systemDefault()).toInstant()).time
+        return calendar.timeInMillis
     }
 
 

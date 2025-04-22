@@ -509,7 +509,7 @@ fun EditDoctorDetails(
                 },
                 label = {
                     Text(
-                        text = "BMDC Registration No",
+                        text = "License Code",
                         fontFamily = fontInria
                     )
                 },
