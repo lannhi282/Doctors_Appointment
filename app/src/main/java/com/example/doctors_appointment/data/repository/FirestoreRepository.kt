@@ -27,7 +27,7 @@ interface FirestoreRepository{
     // APPOINTMENT
     suspend fun insertAppointment(appointment: Appointment)
     suspend fun updateAppointment(appointment: Appointment)
-    suspend fun deleteAppointment(appointmentId: String)
+    suspend fun deleteAppointment(appointment: Appointment)
     suspend fun getAppointmentById(appointmentId: String): Appointment?
     suspend fun getUpcomingAppointments(userId: String, isDoctor: Boolean): List<Appointment>
     suspend fun getPastAppointments(userId: String, isDoctor: Boolean): List<Appointment>
@@ -39,4 +39,15 @@ interface FirestoreRepository{
 
     // SUPPORT
     suspend fun setAppointment(doctorId: String, patientId: String, appointment: Appointment)
+
 }
+
+
+
+
+
+
+
+//fun getCategoryDoctor(category: String): Flow<List<Doctor>>
+
+

@@ -6,15 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Upcoming
+import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Upcoming
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,7 +30,6 @@ import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
-import io.realm.kotlin.query.RealmResults
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -37,6 +39,7 @@ import java.util.Locale
 fun AppointmentPage(
     othersViewModel: OthersViewModel
 ) {
+    val scope = rememberCoroutineScope()
 
     val items = listOf(
         BottomNavigationItem(
@@ -94,7 +97,55 @@ fun AppointmentPage(
                 val doctor = othersViewModel.doctors.value.find { it.id == appointment.doctorId }
 
                 doctor?.let {
-                    AppointmentRow(appointment, Modifier.padding(10.dp).scale(1.1f), it)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AppointmentRow(
+                            appointment = appointment,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            doctor = it
+                        )
+
+                        Column(
+                            modifier = Modifier.wrapContentHeight(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        othersViewModel.deleteAppointment(appointment)
+                                    }
+                                },
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete appointment",
+                                    tint = Color(0xFF0059B3)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        val updated = appointment.copy(status = "confirmed")
+                                        othersViewModel.updateAppointment(updated)
+                                    }
+                                },
+                                modifier = Modifier.padding(top = 4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Autorenew,
+                                    contentDescription = "Update appointment",
+                                    tint = Color(0xFF0059B3)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -108,15 +159,14 @@ fun AppointmentRow(
     doctor: Doctor
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(5.dp)
             .clip(RoundedCornerShape(10))
             .border(2.dp, Indigo500, RoundedCornerShape(10))
             .background(Color.White)
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 15.dp, top = 12.dp, end = 12.dp, bottom = 10.dp)
         ) {

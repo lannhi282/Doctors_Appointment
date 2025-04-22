@@ -13,15 +13,11 @@ import com.example.doctors_appointment.data.repository.FirestoreRepository
 import com.example.doctors_appointment.util.ProfileEvent
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
-import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-
 
 class OthersViewModel(
     private val repository: FirestoreRepository,
@@ -63,29 +59,23 @@ class OthersViewModel(
             is ProfileEvent.EditDoT -> user.dateOfBirth = event.dot
             is ProfileEvent.EditNumber -> user.contactNumber = event.contact
             is ProfileEvent.EditNotificationStatus -> user.notification = event.notificationStatus
-//            is ProfileEvent.EditMedicalHis -> user.medicalHistory = event.medicalHis
-
             is ProfileEvent.OnSave -> {
                 viewModelScope.launch {
                     repository.updatePatient(user)
                     MyApp.patient = user
-//                    sendUiEvent(UiEvent.ShowSnackbar("✅ Cập nhật thành công"))
-
                 }
             }
-
-
             else -> {}
         }
     }
 
-    private fun sendUiEvent(uiEvent: UiEvent){
+    private fun sendUiEvent(uiEvent: UiEvent) {
         viewModelScope.launch {
             _uiEvents.send(uiEvent)
         }
     }
 
-    fun getDoctorFromId(userId: String){
+    fun getDoctorFromId(userId: String) {
         viewModelScope.launch {
             repository.getDoctorById(userId)?.let {
                 doctor = it
@@ -93,13 +83,13 @@ class OthersViewModel(
         }
     }
 
-    fun getDoctorFromCategory(category: String){
+    fun getDoctorFromCategory(category: String) {
         viewModelScope.launch {
             categoryDoctors.value = repository.getDoctorsByCategory(category)
         }
     }
 
-    fun updatePatient(patient: Patient){
+    fun updatePatient(patient: Patient) {
         viewModelScope.launch {
             repository.updatePatient(patient)
             MyApp.patient = patient
@@ -108,24 +98,18 @@ class OthersViewModel(
 
     init {
         observeDoctorsRealtime()
+        refreshAppointments()
+    }
 
+    fun refreshAppointments() {
         viewModelScope.launch {
-            doctors.value = repository.getAllDoctors()
-//        }
-
-//        viewModelScope.launch {
-            pastAppointments.value = repository.getPastAppointments(user.id, isDoctor = false)
-//        }
-
-//        viewModelScope.launch {
             upcomingAppointments.value = repository.getUpcomingAppointments(user.id, isDoctor = false)
+            pastAppointments.value = repository.getPastAppointments(user.id, isDoctor = false)
         }
     }
 
     suspend fun updateUpcomingAppointments() {
-        viewModelScope.launch {
-            upcomingAppointments.value = repository.getUpcomingAppointments(user.id, isDoctor = false)
-        }
+        upcomingAppointments.value = repository.getUpcomingAppointments(user.id, isDoctor = false)
     }
 
     suspend fun getDoctorById(id: String): Doctor? {
@@ -135,6 +119,39 @@ class OthersViewModel(
     fun signout() {
         auth.signOut()
         navController.navigate(Screen.signIn.route)
+    }
+
+    fun deleteAppointment(appointment: Appointment) {
+        viewModelScope.launch {
+            try {
+                repository.deleteAppointment(appointment)
+                refreshAppointments()
+            } catch (e: Exception) {
+                Log.e("🔥 DELETE ERROR", "Không thể xoá lịch hẹn: ${e.message}")
+            }
+        }
+    }
+
+    fun updateAppointment(appointment: Appointment) {
+        viewModelScope.launch {
+            try {
+                repository.updateAppointment(appointment)
+                refreshAppointments()
+            } catch (e: Exception) {
+                Log.e("🔥 UPDATE ERROR", "Không thể cập nhật lịch hẹn: ${e.message}")
+            }
+        }
+    }
+
+    fun insertAppointmentAndRefresh(appointment: Appointment) {
+        viewModelScope.launch {
+            try {
+                repository.insertAppointment(appointment)
+                refreshAppointments()
+            } catch (e: Exception) {
+                Log.e("🔥 INSERT ERROR", "Không thể thêm lịch hẹn: ${e.message}")
+            }
+        }
     }
 
     fun observeDoctorsRealtime() {
@@ -152,5 +169,4 @@ class OthersViewModel(
                 }
             }
     }
-
 }

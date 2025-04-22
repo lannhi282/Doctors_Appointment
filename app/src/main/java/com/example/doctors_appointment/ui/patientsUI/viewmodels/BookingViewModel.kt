@@ -114,4 +114,5 @@ class BookingViewModel(
             appointment = Appointment()
         }
     }
+
 }

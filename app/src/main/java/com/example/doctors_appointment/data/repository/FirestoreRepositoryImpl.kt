@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Doctor
 import com.example.doctors_appointment.data.model.Patient
+import com.example.doctors_appointment.util.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -111,11 +112,31 @@ override suspend fun updateDoctor(doctor: Doctor) {
         docRef.set(appointment).await()
     }
     override suspend fun updateAppointment(appointment: Appointment) {
-        db.collection("appointments").document(appointment.id).set(appointment).await()
+        if (appointment.id.isNotEmpty()) {
+            try {
+                db.collection("appointments")
+                    .document(appointment.id)
+                    .set(appointment)
+                    .await()
+                Log.d("Firestore", "✅ Appointment updated: ${appointment.id}")
+            } catch (e: Exception) {
+                Log.e("🔥 FirestoreError", "❌ Failed to update appointment ${appointment.id}: ${e.message}")
+            }
+        } else {
+            Log.e("UPDATE", "❌ Appointment ID rỗng, không thể cập nhật")
+        }
     }
 
-    override suspend fun deleteAppointment(appointmentId: String) {
-        db.collection("appointments").document(appointmentId).delete().await()
+    override suspend fun deleteAppointment(appointment: Appointment) {
+        if (appointment.id.isNotEmpty()) {
+            FirebaseFirestore.getInstance()
+                .collection("appointments")
+                .document(appointment.id)
+                .delete()
+                .await()
+        } else {
+            Log.e("DELETE", "Appointment ID rỗng, không thể xoá")
+        }
     }
 
     override suspend fun getAppointmentById(appointmentId: String): Appointment? {
