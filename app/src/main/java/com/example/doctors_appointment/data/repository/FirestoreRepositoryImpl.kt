@@ -24,9 +24,20 @@ object FirestoreRepositoryImpl : FirestoreRepository {
         db.collection("doctors").document(doctorId).delete().await()
     }
 
-    override suspend fun updateDoctor(doctor: Doctor) {
-        db.collection("doctors").document(doctor.id).set(doctor).await()
+//    override suspend fun updateDoctor(doctor: Doctor) {
+//        db.collection("doctors").document(doctor.id).set(doctor).await()
+//    }
+override suspend fun updateDoctor(doctor: Doctor) {
+    val docRef = if (!doctor.id.isNullOrEmpty()) {
+        db.collection("doctors").document(doctor.id)
+    } else {
+        val newRef = db.collection("doctors").document()
+        doctor.id = newRef.id
+        newRef
     }
+
+    docRef.set(doctor).await()
+}
 
     override suspend fun getAllDoctors(): List<Doctor> {
         return db.collection("doctors").get().await().toObjects(Doctor::class.java)
