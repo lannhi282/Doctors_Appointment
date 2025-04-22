@@ -114,4 +114,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-firestore:24.0.1' // Cập nhật phiên bản mới nhất
     implementation 'com.google.firebase:firebase-auth:21.0.1' // Cập nhật phiên bản mới nhất
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
 }
