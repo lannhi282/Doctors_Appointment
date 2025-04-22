@@ -77,6 +77,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.ButtonDefaults
 
 
 //ăsaefdsv
@@ -283,20 +286,52 @@ fun ProfilePage(
                     }
                 } else Profile(othersViewModel.user)
                 Spacer(modifier = Modifier.height(7.dp))
+                // Change password
+                OutlinedButton(
+                    onClick = {
+                        navController.navigate("change_password")
+                    },
+                    modifier = Modifier
+//                        .fillMaxWidth()
+                        .width(200.dp)
+                        .padding(horizontal = 10.dp)
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Lock,
+                        contentDescription = "Change Password",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Text("Change Password", fontSize = 20.sp, fontFamily = fontInria)
+                }
 
                 // Logout Button
                 OutlinedButton(
                     onClick = onSignOut,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
+                        .width(200.dp)
+                        .padding(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Indigo500,
+                        contentColor = Color.White
+                    )
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.ExitToApp,
+                        contentDescription = "Logout",
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Logout",
                         fontSize = 20.sp,
                         fontFamily = fontInria,
                     )
                 }
+
+
 
 
                 Spacer(modifier = Modifier.height(7.dp))

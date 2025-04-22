@@ -127,6 +127,9 @@ fun NavBar(highNavController: NavHostController) {
             composable(Screen.mainHome.route){
                 MainHome(navController = navController, mainHomeViewModel = mainHomeViewModel)
             }
+            composable("change_password") {
+                ChangePasswordScreen(navController = navController, othersViewModel = othersViewModel)
+            }
             composable(Screen.signIn.route){
                 SignIn(navController = navController, signInViewModel = signInViewModel)
             }
