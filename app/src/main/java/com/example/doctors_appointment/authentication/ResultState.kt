@@ -1,5 +1,5 @@
 package com.example.doctors_appointment.authentication
-
+//dhjfvb
 sealed class ResultState<T>(
     val data: T? = null,
     val message: String? = null
