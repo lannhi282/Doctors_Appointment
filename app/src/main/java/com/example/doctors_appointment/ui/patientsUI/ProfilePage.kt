@@ -72,6 +72,8 @@ import com.example.doctors_appointment.util.ProfileEvent
 import java.util.UUID
 import kotlin.math.sign
 import android.net.Uri
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -137,7 +139,16 @@ fun ProfilePage(
             verticalArrangement = Arrangement.Center,
         ){
 
-            val launcher = rememberLauncherForActivityResult(
+//            val launcher = rememberLauncherForActivityResult(
+//                contract = ActivityResultContracts.GetContent()
+//            ) { uri: Uri? ->
+//                uri?.let {
+//                    othersViewModel.updateProfileImage(it.toString())
+//                }
+//            }
+            val context = LocalContext.current
+
+            val imagePickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent()
             ) { uri: Uri? ->
                 uri?.let {
@@ -145,23 +156,60 @@ fun ProfilePage(
                 }
             }
 
+            val permissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission()
+            ) { isGranted ->
+                if (isGranted) {
+                    imagePickerLauncher.launch("image/*")
+                } else {
+                    Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+// Xác định permission phù hợp theo API
+            val requiredPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            } else {
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+
             Box(
                 contentAlignment = Alignment.Center
             ) {
-                RoundImage(
-                    image = if (othersViewModel.user.profileImage.isNotEmpty())
-                        rememberAsyncImagePainter(model = othersViewModel.user.profileImage)
-                    else painterResource(id = R.drawable.man),
+                // Khung tròn có viền
+                Box(
                     modifier = Modifier
-                        .height(80.dp)
+                        .size(90.dp)
+                        .clip(CircleShape)
+                        .border(width = 3.dp, color = Indigo500, shape = CircleShape)
                         .clickable {
-                            launcher.launch("image/*")
-                        }
-                )
+                            permissionLauncher.launch(requiredPermission)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Avatar hoặc ảnh mặc định
+                    val avatarPainter = if (othersViewModel.user.profileImage.isNotEmpty())
+                        rememberAsyncImagePainter(model = othersViewModel.user.profileImage)
+                    else
+                        painterResource(id = R.drawable.man)
+
+                    // Ảnh nằm giữa khung tròn
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                    ) {
+                        androidx.compose.foundation.Image(
+                            painter = avatarPainter,
+                            contentDescription = "Avatar",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
 
                 if (onEdit) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        imageVector = Icons.Filled.Edit,
                         contentDescription = "Edit profile picture",
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -171,6 +219,7 @@ fun ProfilePage(
                     )
                 }
             }
+
 
             var filledName by remember {
                 mutableStateOf(othersViewModel.user.name)
