@@ -67,7 +67,7 @@ import com.example.doctors_appointment.ui.theme.Indigo100
 import com.example.doctors_appointment.util.ProfileEvent
 import java.util.UUID
 import kotlin.math.sign
-
+//ăsaef
 @Composable
 fun ProfilePage(
     navController: NavController,
@@ -194,7 +194,7 @@ fun ProfilePage(
                         )
                     }
                 } else Profile(othersViewModel.user)
-// Medical history ====
+// Medical history =======
 //                Spacer(modifier = Modifier.height(10.dp))
 //
 //                var problem by remember { mutableStateOf("") }
