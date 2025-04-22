@@ -75,6 +75,14 @@ class OthersViewModel(
         }
     }
 
+    fun updateProfileImage(imageUri: String) {
+        viewModelScope.launch {
+            user.profileImage = imageUri
+            repository.updatePatient(user)
+            MyApp.patient = user
+        }
+    }
+
     fun getDoctorFromId(userId: String) {
         viewModelScope.launch {
             repository.getDoctorById(userId)?.let {

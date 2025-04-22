@@ -18,6 +18,7 @@ sealed class ProfileEvent {
     data class EditExperience(val experience: Int) : ProfileEvent()
     data class EditAddress(val address: String) : ProfileEvent()
     data class EditMedicalHis(val medicalHis: List<Appointment>): ProfileEvent()
+    data class UpdateProfileImage(val imageUri: String): ProfileEvent()
 
     object OnSave : ProfileEvent()
 }

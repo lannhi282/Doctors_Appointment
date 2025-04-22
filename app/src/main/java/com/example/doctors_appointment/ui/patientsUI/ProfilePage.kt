@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+//import androidx.compose.material.icons.Default
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
@@ -43,12 +45,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.MyApp.Companion.patient
 import com.example.doctors_appointment.R
@@ -67,6 +71,12 @@ import com.example.doctors_appointment.ui.theme.Indigo100
 import com.example.doctors_appointment.util.ProfileEvent
 import java.util.UUID
 import kotlin.math.sign
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+
+
 //ăsaefdsv
 @Composable
 fun ProfilePage(
@@ -122,16 +132,45 @@ fun ProfilePage(
         Column(
             modifier = Modifier
                 .height(160.dp)
-                .fillMaxWidth()
-            ,
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
+        ){
 
-            ){
-            RoundImage(
-                image = painterResource(id = R.drawable.man),
-                modifier = Modifier.height(80.dp)
-            )
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri: Uri? ->
+                uri?.let {
+                    othersViewModel.updateProfileImage(it.toString())
+                }
+            }
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                RoundImage(
+                    image = if (othersViewModel.user.profileImage.isNotEmpty())
+                        rememberAsyncImagePainter(model = othersViewModel.user.profileImage)
+                    else painterResource(id = R.drawable.man),
+                    modifier = Modifier
+                        .height(80.dp)
+                        .clickable {
+                            launcher.launch("image/*")
+                        }
+                )
+
+                if (onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit profile picture",
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .background(Color.White, CircleShape)
+                            .padding(4.dp)
+                            .size(24.dp)
+                    )
+                }
+            }
 
             var filledName by remember {
                 mutableStateOf(othersViewModel.user.name)
@@ -194,72 +233,6 @@ fun ProfilePage(
                         )
                     }
                 } else Profile(othersViewModel.user)
-// Medical history =======
-//                Spacer(modifier = Modifier.height(10.dp))
-//
-//                var problem by remember { mutableStateOf("") }
-//                var diagnosis by remember { mutableStateOf("") }
-//                var medications by remember { mutableStateOf("") }
-//                var advice by remember { mutableStateOf("") }
-//
-//                Text("Add New Medical Record", fontWeight = FontWeight.Bold, fontSize = 20.sp, fontFamily = fontInria)
-//
-//                OutlinedTextField(
-//                    value = problem,
-//                    onValueChange = { problem = it },
-//                    label = { Text("Problem", fontFamily = fontInria) },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//
-//                OutlinedTextField(
-//                    value = diagnosis,
-//                    onValueChange = { diagnosis = it },
-//                    label = { Text("Diagnosis (comma separated)", fontFamily = fontInria) },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//
-//                OutlinedTextField(
-//                    value = medications,
-//                    onValueChange = { medications = it },
-//                    label = { Text("Medications (comma separated)", fontFamily = fontInria) },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//
-//                OutlinedTextField(
-//                    value = advice,
-//                    onValueChange = { advice = it },
-//                    label = { Text("Advice", fontFamily = fontInria) },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//
-//                Button(
-//                    onClick = {
-//                        val newAppointment = Appointment(
-//                            id = UUID.randomUUID().toString(),
-//                            appointmentDate = System.currentTimeMillis(), // hoặc dùng thời gian từ input người dùng
-//                            prescription = Prescription(
-//                                problem = "Đau đầu",
-//                                diagnosis = listOf("Thiếu ngủ", "Stress"),
-//                                medications = listOf("Paracetamol 500mg", "Vitamin B"),
-//                                advice = "Nghỉ ngơi hợp lý và uống đủ nước"
-//                            )
-//                        )
-//                        val updatedList = patient.medicalHistory.toMutableList().apply {
-//                            add(newAppointment)
-//                        }
-//                        othersViewModel.OnEvent(ProfileEvent.EditMedicalHis(updatedList))
-//                        // clear input fields if needed
-//                        problem = ""
-//                        diagnosis = ""
-//                        medications = ""
-//                        advice = ""
-//                    },
-//                    modifier = Modifier.padding(top = 8.dp)
-//                ) {
-//                    Text("Add Record", fontFamily = fontInria)
-//                }
-//                =====
-
                 Spacer(modifier = Modifier.height(7.dp))
 
                 // Logout Button
