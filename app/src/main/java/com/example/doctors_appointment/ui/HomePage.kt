@@ -51,7 +51,7 @@ fun HomePage(navController: NavController){
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = "Doctor's Appointment",
+                text = "Dental Appointment",
                 fontSize = 42 .sp,
                 fontWeight = FontWeight.Bold,
                 color = Indigo900,
@@ -59,12 +59,14 @@ fun HomePage(navController: NavController){
                 textAlign = TextAlign.Center
             )
             Image(
-                painter = painterResource(id = R.drawable.doctors_appointment__1_),
+                painter = painterResource(id = R.drawable.logo),
                 modifier = Modifier
-                    .height(220.dp),
+                    .height(300.dp)
+                     .width(300.dp),
 //                    .clip(RoundedCornerShape(30.dp)),
                 contentDescription = null,
             )
+
             Button(
                 onClick = {
                     navController.navigate(Screen.signIn.route)

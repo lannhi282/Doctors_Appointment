@@ -355,7 +355,8 @@ fun DoctorsDetails(
                 Spacer(modifier = Modifier.height(5.dp))
 
                 Text(
-                    text = "BMDC Registration No:",
+
+                    text = "License Code:",
                     fontSize = 19.sp,
                     fontFamily = fontInria,
                     color = Color.Black,

@@ -2,11 +2,8 @@ package com.example.doctors_appointment.ui.patientsUI.mainHome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.doctors_appointment.R
 import com.example.doctors_appointment.ui.theme.Indigo400
-import com.example.doctors_appointment.ui.theme.Indigo500
 
 // Featured Item
 
@@ -46,22 +42,22 @@ fun FeaturedItems() {
     val featuredItems = listOf(
 
         Featured(
-            name = "Azizul Baten",
+            name = "Khanh Linh",
             motivation = "A senior heart Specialist. Care your Heart with the best doctor in the town",
             image = painterResource(id = R.drawable.senior_doctor)
         ),
         Featured(
-            name = "Shoishob Rahman",
+            name = "Khanh Long",
             motivation = "A potol Specialist. Potol is so neutricious. It is good for health",
-            image = painterResource(id = R.drawable.feature_doctor)
+            image = painterResource(id = R.drawable.dr1)
         ),
         Featured(
-            name = "Razia Sultana",
+            name = "Lan Nhi",
             motivation = "An experienced gynocolgist. Care mothers and their child. They makes the future of the world",
             image = painterResource(id = R.drawable.female_doctor)
         ),
         Featured(
-            name = "Salina Zaman",
+            name = "Thai Lam",
             motivation = "A child Specialist. foitrotg rojoihbgorgjoigoj",
             image = painterResource(id = R.drawable.salina_zaman)
         )
@@ -77,6 +73,7 @@ fun FeaturedItems() {
         text = "  Specialist",
         fontFamily = fontInria,
         fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
         style = MaterialTheme.typography.labelLarge
     )
 

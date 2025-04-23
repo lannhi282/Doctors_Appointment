@@ -1,7 +1,16 @@
 package com.example.doctors_appointment.ui.patientsUI
 
+//import androidx.compose.material.icons.Default
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +26,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.Default
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -35,16 +45,17 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,33 +64,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.MyApp.Companion.patient
 import com.example.doctors_appointment.R
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Patient
-import com.example.doctors_appointment.data.model.Prescription
-import com.example.doctors_appointment.ui.SignIn
-import com.example.doctors_appointment.ui.patientsUI.mainHome.RoundImage
 import com.example.doctors_appointment.ui.patientsUI.mainHome.fontInria
+import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
+import com.example.doctors_appointment.ui.theme.Indigo100
 import com.example.doctors_appointment.ui.theme.Indigo200
 import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
-import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
-import com.example.doctors_appointment.ui.theme.Indigo100
 import com.example.doctors_appointment.util.ProfileEvent
-import java.util.UUID
-import kotlin.math.sign
-import android.net.Uri
-import android.os.Build
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.ButtonDefaults
 
 
 //ăsaefdsv
@@ -92,6 +88,14 @@ fun ProfilePage(
 
     var onEdit by remember {
         mutableStateOf(false)
+    }
+
+    val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
+
+    LaunchedEffect(Unit) {
+        othersViewModel.fetchProfileImageAsBitmap { bitmap ->
+            bitmapState.value = bitmap
+        }
     }
 
     Column(
@@ -155,7 +159,12 @@ fun ProfilePage(
                 contract = ActivityResultContracts.GetContent()
             ) { uri: Uri? ->
                 uri?.let {
-                    othersViewModel.updateProfileImage(it.toString())
+//                    othersViewModel.updateProfileImage(it.toString())
+                    othersViewModel.saveImageBinaryToFirestoreInMedicalHistory(
+                        context = context,
+                        uri = uri,
+                        patientId = patient.id
+                    )
                 }
             }
 
@@ -190,11 +199,6 @@ fun ProfilePage(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    // Avatar hoặc ảnh mặc định
-                    val avatarPainter = if (othersViewModel.user.profileImage.isNotEmpty())
-                        rememberAsyncImagePainter(model = othersViewModel.user.profileImage)
-                    else
-                        painterResource(id = R.drawable.man)
 
                     // Ảnh nằm giữa khung tròn
                     Box(
@@ -202,11 +206,25 @@ fun ProfilePage(
                             .size(80.dp)
                             .clip(CircleShape)
                     ) {
-                        androidx.compose.foundation.Image(
-                            painter = avatarPainter,
-                            contentDescription = "Avatar",
-                            modifier = Modifier.fillMaxSize()
-                        )
+
+                        if (bitmapState.value != null) {
+                            Image(
+                                bitmap = bitmapState.value!!.asImageBitmap(),
+                                contentDescription = "Avatar",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Gray)
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.man),
+                                contentDescription = "Avatar",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+
                     }
                 }
 
@@ -284,7 +302,7 @@ fun ProfilePage(
                             fontFamily = fontInria,
                         )
                     }
-                } else Profile(othersViewModel.user)
+                } else Profile(othersViewModel.user )
                 Spacer(modifier = Modifier.height(7.dp))
                 // Change password
                 OutlinedButton(
@@ -293,7 +311,7 @@ fun ProfilePage(
                     },
                     modifier = Modifier
 //                        .fillMaxWidth()
-                        .width(200.dp)
+                        .width(250.dp)
                         .padding(horizontal = 10.dp)
 
                 ) {
@@ -311,7 +329,7 @@ fun ProfilePage(
                 OutlinedButton(
                     onClick = onSignOut,
                     modifier = Modifier
-                        .width(200.dp)
+                        .width(250.dp)
                         .padding(10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = Indigo500,

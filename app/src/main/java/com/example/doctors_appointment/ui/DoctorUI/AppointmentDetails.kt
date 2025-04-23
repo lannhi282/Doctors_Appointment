@@ -44,6 +44,7 @@ import com.example.doctors_appointment.ui.DoctorUI.DoctorViewModel
 import com.example.doctors_appointment.ui.patientsUI.AppointmentRow
 import com.example.doctors_appointment.ui.theme.Indigo400
 import com.example.doctors_appointment.util.Screen
+import com.google.firebase.firestore.Blob
 
 @Composable
 fun DoctorAppointmentDetails(
@@ -73,7 +74,7 @@ fun DoctorAppointmentDetails(
         weight = 70.0 // Example weight in kilograms
         gender = true // Example gender (true for male, false for female)
         dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
-        profileImage = "path_to_image.jpg" // Example path to profile image
+        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
     }
 
 
@@ -146,7 +147,7 @@ fun PatientProfile(
         weight = 56.0 // Example weight in kilograms
         gender = true // Example gender (true for male, false for female)
         dateOfBirth = "2005-11-18" // Example date of birth in yyyy-MM-dd format
-        profileImage = "path_to_image.jpg" // Example path to profile image
+        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
     }
 
 

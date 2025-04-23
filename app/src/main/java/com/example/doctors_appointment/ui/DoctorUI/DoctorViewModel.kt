@@ -14,6 +14,7 @@ import com.example.doctors_appointment.util.ProfileEvent
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Blob
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.channels.Channel
@@ -39,7 +40,7 @@ class DoctorViewModel(
         weight = 70.0 // Example weight in kilograms
         gender = true // Example gender (true for male, false for female)
         dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
-        profileImage = "path_to_image.jpg" // Example path to profile image
+        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
     }
     var patientList = mutableStateOf<List<Patient>>(listOf())
 

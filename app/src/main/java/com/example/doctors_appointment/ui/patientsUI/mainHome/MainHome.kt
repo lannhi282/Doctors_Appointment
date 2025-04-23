@@ -55,7 +55,7 @@ fun MainHome(
     ){
         TopBar(
             name = mainHomeViewModel.patient.name,
-            profileImage = painterResource(id = R.drawable.man),
+            profileImage = painterResource(id = R.drawable.logo),
         )
 
         FeaturedItems()

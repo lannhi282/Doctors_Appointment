@@ -112,11 +112,21 @@ class BookingViewModel(
         return number != number.toInt().toDouble()
     }
 
-    fun onConfirm() {
-        viewModelScope.launch {
-            repository.setAppointment(doctor1.id, user.id, appointment)
-            appointment = Appointment()
-        }
+//    fun onConfirm() {
+//        viewModelScope.launch {
+//            repository.setAppointment(doctor1.id, user.id, appointment)
+//            appointment = Appointment()
+//
+//        }
+//    }
+//
+//}
+fun onConfirm(onSuccess: () -> Unit = {}) {
+    viewModelScope.launch {
+        repository.setAppointment(doctor1.id, user.id, appointment)
+        appointment = Appointment()
+        onSuccess()
     }
+}
 
 }

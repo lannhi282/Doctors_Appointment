@@ -62,6 +62,7 @@ fun DoctorsPreview(
         text = " Doctors",
         fontFamily = fontInria,
         fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
         style = MaterialTheme.typography.labelLarge
     )
 
@@ -118,7 +119,7 @@ fun DoctorsCard(
             )
             Text(
                 text = doctor.medicalSpecialty,
-                fontSize = 10.sp,
+                fontSize = 12.sp,
                 fontFamily = fontInria,
                 color = Indigo900
             )
@@ -143,7 +144,7 @@ fun DoctorsCard(
             )
             Text(
                 text = String.format("%.2f", doctor.rating),
-                fontSize = 8.sp,
+                fontSize = 10.sp,
                 fontFamily = fontInria,
                 color = Indigo900
             )

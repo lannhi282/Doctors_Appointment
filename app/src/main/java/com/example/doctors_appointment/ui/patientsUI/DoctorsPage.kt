@@ -11,15 +11,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +41,14 @@ import androidx.navigation.NavController
 import com.example.doctors_appointment.data.model.Doctor
 import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.ui.patientsUI.mainHome.fontInria
+import com.example.doctors_appointment.ui.theme.Indigo400
 import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
-import com.example.doctors_appointment.ui.theme.Indigo400
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoctorsPage(
     navController: NavController,
@@ -45,6 +56,7 @@ fun DoctorsPage(
 ) {
 
     val doctors = othersViewModel.doctors
+    var searchQuery by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -55,6 +67,7 @@ fun DoctorsPage(
                 .background(Indigo50)
                 .padding(10.dp),
         ) {
+
             Text(
                 text = "Find your Doctor",
                 style = MaterialTheme.typography.headlineMedium,
@@ -63,12 +76,27 @@ fun DoctorsPage(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text("Search doctors...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                shape = RoundedCornerShape(14.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Indigo500,
+                    unfocusedBorderColor = Indigo400
+                )
+            )
             LazyColumn(
                 modifier = Modifier
                     .padding(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 65.dp)
             ){
-                items(doctors.value.size){
-                    DoctorsRow(doctor = doctors.value[it], navController)
+                items(doctors.value.filter { it.name.contains(searchQuery, ignoreCase = true) }){ doctor ->
+                    DoctorsRow(doctor = doctor, navController)
                 }
             }
         }
@@ -87,8 +115,6 @@ fun DoctorsRow(
             .clip(RoundedCornerShape(10))
             .border(2.dp, Indigo500, RoundedCornerShape(10))
             .background(Color.White)
-        //.background(Indigo50)
-
     ){
 
         Row(

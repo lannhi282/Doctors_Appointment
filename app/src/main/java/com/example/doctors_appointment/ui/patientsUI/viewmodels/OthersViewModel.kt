@@ -1,5 +1,8 @@
 package com.example.doctors_appointment.ui.patientsUI.viewmodels
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -17,6 +20,7 @@ import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -92,7 +96,7 @@ class OthersViewModel(
                         val url = downloadUri.toString()
 
                         // Cập nhật ảnh đại diện trong user
-                        user.profileImage = url
+                        user.profileImage = Blob.fromBytes(byteArrayOf())
 
                         // Cập nhật lên Firestore
                         viewModelScope.launch {
@@ -108,6 +112,57 @@ class OthersViewModel(
             }
         }
     }
+
+    fun saveImageBinaryToFirestoreInMedicalHistory(
+        context: Context,
+        uri: Uri,
+        patientId: String
+    ) {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return
+        val byteArray = inputStream.readBytes()
+
+        // Kiểm tra giới hạn dung lượng
+        if (byteArray.size > 1024 * 1024) {
+            Log.e("Firestore", "Ảnh quá lớn, vượt quá 1MB!")
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val medicalHistoryUpdate = mapOf(
+            "profileImage" to com.google.firebase.firestore.Blob.fromBytes(byteArray)
+        )
+
+        db.collection("patients").document(patientId)
+            .update(medicalHistoryUpdate)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Lưu ảnh nhị phân vào medicalHistory thành công.")
+            }
+            .addOnFailureListener {
+                Log.e("Firestore", "Lỗi khi lưu ảnh: ${it.message}")
+            }
+    }
+
+    fun fetchProfileImageAsBitmap(onResult: (Bitmap?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("patients")
+            .document(user.id)
+            .get()
+            .addOnSuccessListener { doc ->
+                val blob = doc.get("profileImage") as? com.google.firebase.firestore.Blob
+                val bytes = blob?.toBytes()
+                if (bytes != null) {
+                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    onResult(bitmap)
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Firestore", "Lỗi khi lấy ảnh nhị phân: ${it.message}")
+                onResult(null)
+            }
+    }
+
 
     fun getDoctorFromId(userId: String) {
         viewModelScope.launch {

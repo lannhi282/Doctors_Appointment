@@ -80,6 +80,7 @@ fun CategoryRow(
         text = " Category",
         fontFamily = fontInria,
         fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
         style = MaterialTheme.typography.labelLarge
     )
 
@@ -112,7 +113,7 @@ fun CategoryCard(
          horizontalAlignment = Alignment.CenterHorizontally
     ) {
          Image(
-             modifier = Modifier.height(45.dp),
+             modifier = Modifier.height(50.dp),
              painter = category.icon,
              contentDescription = "disease category"
          )
@@ -120,7 +121,7 @@ fun CategoryCard(
              text = category.name,
              fontFamily = fontActor,
              textAlign = TextAlign.Center,
-             fontSize = 12.sp
+             fontSize = 15.sp
          )
     }
 }
