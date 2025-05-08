@@ -68,9 +68,6 @@ fun NavBar(highNavController: NavHostController) {
     val repository: FirestoreRepository = FirestoreRepositoryImpl
 
     // viewModel Initialization
-
-
-    val bookingViewModel = BookingViewModel(repository)
     val mainHomeViewModel = MainHomeViewModel(repository)
     val signInViewModel: SignInViewModel = hiltViewModel()
 
@@ -113,6 +110,7 @@ fun NavBar(highNavController: NavHostController) {
         repository,
         navController = navController
     )
+    val bookingViewModel = BookingViewModel(repository, othersViewModel)
 
     Scaffold(
         bottomBar = {

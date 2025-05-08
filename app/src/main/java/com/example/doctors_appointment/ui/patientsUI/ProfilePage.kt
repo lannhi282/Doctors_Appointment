@@ -294,6 +294,10 @@ fun ProfilePage(
                         onClick = {
                             othersViewModel.OnEvent(ProfileEvent.OnSave)
                             onEdit = !onEdit
+                            // Force reload the profile page
+                            othersViewModel.fetchProfileImageAsBitmap { bitmap ->
+                                bitmapState.value = bitmap
+                            }
                         }
                     ) {
                         Text(
@@ -329,7 +333,7 @@ fun ProfilePage(
                 OutlinedButton(
                     onClick = onSignOut,
                     modifier = Modifier
-                        .width(250.dp)
+                        .width(200.dp)
                         .padding(10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = Indigo500,

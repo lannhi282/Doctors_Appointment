@@ -65,22 +65,13 @@ fun FinalBooking(
 
         Spacer(modifier = Modifier.height(35.dp))
 
-//        OutlinedButton(
-//            onClick = {
-//                bookingViewModel.onConfirm()
-//                navController.navigate(Screen.appointment.route)
-//            }
-//        )
         OutlinedButton(
             onClick = {
-                bookingViewModel.onConfirm {
-                    navController.navigate(Screen.appointment.route) {
-                        popUpTo(Screen.appointment.route) { inclusive = true }
-                    }
-                }
+                bookingViewModel.onConfirm()
+                bookingViewModel.othersViewModel.refreshAppointments()
+                navController.navigate(Screen.appointment.route)
             }
-        )
-        {
+        ) {
             Text(
                 text = "CONFIRM BOOKING",
                 fontSize = 25.sp,

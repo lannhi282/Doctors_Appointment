@@ -136,6 +136,10 @@ class OthersViewModel(
             .update(medicalHistoryUpdate)
             .addOnSuccessListener {
                 Log.d("Firestore", "Lưu ảnh nhị phân vào medicalHistory thành công.")
+                // Refresh image immediately after successful upload
+                fetchProfileImageAsBitmap { bitmap ->
+                    user.profileImage = com.google.firebase.firestore.Blob.fromBytes(byteArray)
+                }
             }
             .addOnFailureListener {
                 Log.e("Firestore", "Lỗi khi lưu ảnh: ${it.message}")

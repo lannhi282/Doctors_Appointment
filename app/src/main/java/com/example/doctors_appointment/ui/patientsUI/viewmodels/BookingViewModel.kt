@@ -18,7 +18,8 @@ import java.util.Calendar
 import java.util.Date
 
 class BookingViewModel(
-    private val repository: FirestoreRepository
+    private val repository: FirestoreRepository,
+    val othersViewModel: OthersViewModel
 ) : ViewModel() {
 
 
@@ -112,21 +113,11 @@ class BookingViewModel(
         return number != number.toInt().toDouble()
     }
 
-//    fun onConfirm() {
-//        viewModelScope.launch {
-//            repository.setAppointment(doctor1.id, user.id, appointment)
-//            appointment = Appointment()
-//
-//        }
-//    }
-//
-//}
-fun onConfirm(onSuccess: () -> Unit = {}) {
-    viewModelScope.launch {
-        repository.setAppointment(doctor1.id, user.id, appointment)
-        appointment = Appointment()
-        onSuccess()
+    fun onConfirm() {
+        viewModelScope.launch {
+            repository.setAppointment(doctor1.id, user.id, appointment)
+            appointment = Appointment()
+        }
     }
-}
 
 }
