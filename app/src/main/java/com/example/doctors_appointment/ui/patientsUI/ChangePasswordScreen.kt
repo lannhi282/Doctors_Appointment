@@ -18,6 +18,7 @@ import com.example.doctors_appointment.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
+import com.example.doctors_appointment.ui.DoctorUI.DoctorViewModel
 
 @Composable
 fun ChangePasswordScreen(

@@ -2,6 +2,13 @@ package com.example.doctors_appointment.ui.patientsUI.mainHome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +24,9 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,6 +83,8 @@ fun TopBar(
     profileImage: Painter,
     modifier: Modifier = Modifier
 ){
+    var showNotificationsDialog by remember { mutableStateOf(false) }
+    val notifications = remember { mutableStateListOf<String>() }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -96,7 +108,33 @@ fun TopBar(
             modifier = Modifier
                 .size(30.dp)
                 .padding(end = 10.dp)
+                .clickable {
+                    // Lấy thông báo từ WorkManager và hiển thị trong một Dialog
+                    showNotificationsDialog = true
+                }
         )
+
+        if (showNotificationsDialog) {
+            AlertDialog(
+                onDismissRequest = { showNotificationsDialog = false },
+                title = { Text("Thông báo") },
+                text = {
+                    LazyColumn {
+                        items(notifications) { notification ->
+                            Text(
+                                text = notification,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showNotificationsDialog = false }) {
+                        Text("Đóng")
+                    }
+                }
+            )
+        }
 
     }
 }

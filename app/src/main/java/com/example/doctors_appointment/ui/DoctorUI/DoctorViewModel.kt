@@ -78,7 +78,63 @@ class DoctorViewModel(
     val uiEvents = _uiEvents.receiveAsFlow()
 
     fun OnEvent(event: ProfileEvent) {
-        // ... (existing OnEvent logic)
+        when (event) {
+            is ProfileEvent.EditEmail -> {
+                newDoctor.email = event.email
+            }
+
+            is ProfileEvent.EditGender -> {
+                println("inside edit gender")
+                newDoctor.gender = event.gender
+                assert(newDoctor.gender == event.gender)
+            }
+
+            is ProfileEvent.EditName -> {
+                newDoctor.name = event.name
+            }
+
+            is ProfileEvent.EditNumber -> {
+                newDoctor.contactNumber = event.contact
+            }
+
+            is ProfileEvent.EditNotificationStatus -> {
+                newDoctor.notification = event.notificationStatus
+            }
+
+            is ProfileEvent.AddQualification -> {
+                newDoctor.qualifications = realmListOf(event.qualification) /// change further
+            }
+
+            is ProfileEvent.EditAbout -> {
+                newDoctor.about = event.about
+            }
+
+            is ProfileEvent.EditBMDCNo -> {
+                newDoctor.bmdcRegistrationNumber = event.bmdcNo
+            }
+
+            is ProfileEvent.EditExperience -> {
+                newDoctor.experience = event.experience
+            }
+
+            is ProfileEvent.EditMedicalSpeciality -> {
+                newDoctor.medicalSpecialty = event.medicalSpeciality
+            }
+
+            is ProfileEvent.EditAddress -> {
+                newDoctor.address = event.address
+            }
+
+            is ProfileEvent.OnSave -> {
+                viewModelScope.launch {
+                    repository.updateDoctor(newDoctor)
+                    user = newDoctor
+                }
+            }
+
+
+            else -> {}
+        }
     }
 
     fun getPatient(patientId: String) {

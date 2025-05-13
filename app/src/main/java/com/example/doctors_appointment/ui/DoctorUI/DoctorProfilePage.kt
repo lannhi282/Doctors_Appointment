@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Tab
@@ -181,22 +182,10 @@ fun DoctorProfilePage(
             verticalArrangement = Arrangement.Center,
 
             ) {
-            if (bitmapState.value != null) {
-                Image(
-                    bitmap = bitmapState.value!!.asImageBitmap(),
-                    contentDescription = "Avatar",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray)
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.man),
-                    contentDescription = "Avatar",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+            RoundImage(
+                image = painterResource(id = R.drawable.man),
+                modifier = Modifier.height(80.dp)
+            )
 
             var filledName by remember {
                 mutableStateOf(doctorViewModel.user.name)
@@ -219,8 +208,8 @@ fun DoctorProfilePage(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent, // Text color
                         unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+//
+
                     ),
                 )
             } else {
@@ -346,11 +335,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -374,11 +364,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -405,11 +396,12 @@ fun EditDoctorDetails(
                             text = "Gender"
                         )
                     },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent, // Text color
-                        unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                    shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Indigo900,         // viền đậm khi focus
+                        unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                        cursorColor = Indigo900,
+                        focusedLabelColor = Indigo900
                     ),
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
@@ -460,11 +452,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -486,11 +479,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -512,11 +506,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -538,11 +533,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 
@@ -569,11 +565,12 @@ fun EditDoctorDetails(
                         fontFamily = fontInria
                     )
                 },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Text color
-                    unfocusedContainerColor = Color.Transparent, // Background color
-//                        focusedIndicatorColor = Color.Transparent, // No indicator when focused
-//                        unfocusedIndicatorColor = Color.Transparent // No indicator when not focused
+                shape = RoundedCornerShape(14.dp), // ✅ Bo góc mềm mại
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Indigo900,         // viền đậm khi focus
+                    unfocusedBorderColor = Indigo500,       // viền đậm hơn khi không focus
+                    cursorColor = Indigo900,
+                    focusedLabelColor = Indigo900
                 ),
             )
 

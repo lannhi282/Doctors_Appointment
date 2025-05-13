@@ -126,19 +126,6 @@ fun PatientProfile(
     doctorViewModel: DoctorViewModel
 ) {
 
-//    val patient = Patient().apply {
-//        name = "lam"
-//        email = "lam@gmail.com"
-//        password = "lamlt123@"
-//        contactNumber = "1234567890" // Example contact number
-//        notification = true // Example notification setting
-//        height = 175.0 // Example height in centimeters
-//        weight = 56.0 // Example weight in kilograms
-//        gender = true // Example gender (true for male, false for female)
-//        dateOfBirth = "2005-11-18" // Example date of birth in yyyy-MM-dd format
-//        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
-//    }
-
     val patient = doctorViewModel.patientSelected
 
 
@@ -178,15 +165,15 @@ fun PatientProfile(
 
                 Profile(patient)
 
-                Spacer(modifier = Modifier.height(7.dp))
-
-                Text(
-                    text = "Medical History:",
-                    fontSize = 25.sp,
-                    fontFamily = fontInria,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+//                Spacer(modifier = Modifier.height(7.dp))
+//
+//                Text(
+//                    text = "Medical History:",
+//                    fontSize = 25.sp,
+//                    fontFamily = fontInria,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.Black
+//                )
 
                 Spacer(modifier = Modifier.height(7.dp))
 

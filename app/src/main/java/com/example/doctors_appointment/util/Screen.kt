@@ -19,6 +19,7 @@ sealed class Screen(val route: String){
     object doctorProfile : Screen(route = "doctor profile ")
     object doctorAppointmentDetails : Screen(route = "doctor appointment details ")
     object seePatientProfile : Screen(route = "see patient profile ")
+//    object changePassword : Screen(route = "change_password")
 
     fun withArgs(vararg args: String): String {
         return buildString {
