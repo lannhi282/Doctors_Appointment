@@ -54,6 +54,7 @@ fun BookSchedule(
 
     if (doctorId != null) {
         bookingViewModel.getDoctorFromId(doctorId)
+        bookingViewModel.fetchBookedSlotsForDoctor(doctorId, bookingViewModel.selectedDate.value)
     }
 
     val doctor = bookingViewModel.doctor1
@@ -355,25 +356,36 @@ fun Slot(
     doctor: Doctor,
     selectedSlot: Int,
     bookingViewModel: BookingViewModel,
-    onSlotSelect: (Int) -> Unit     // Callback to notify parent when a slot is selected
+    onSlotSelect: (Int) -> Unit
 ) {
+    val appointmentTime = bookingViewModel.getAppointmentTime(slotNo % 36)
+    val isBooked = bookingViewModel.bookedSlots.value.contains(appointmentTime)
+
     Button(
         onClick = {
-            if (doctor.availabilityStatus[slotNo]) {
-                onSlotSelect(slotNo) // Notify parent about the selection
+            if (doctor.availabilityStatus[slotNo] && !isBooked) {
+                onSlotSelect(slotNo)
             }
         },
+        enabled = doctor.availabilityStatus[slotNo] && !isBooked,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (slotNo == selectedSlot) Indigo400 else Color.White,
-            contentColor = if (doctor.availabilityStatus[slotNo]) {
-                if (selectedSlot == slotNo) Color.White else Indigo900
-            } else Color.LightGray,
+            containerColor = when {
+                isBooked -> Color.LightGray
+                slotNo == selectedSlot -> Indigo400
+                else -> Color.White
+            },
+            contentColor = when {
+                isBooked -> Color.DarkGray
+                doctor.availabilityStatus[slotNo] -> {
+                    if (selectedSlot == slotNo) Color.White else Indigo900
+                }
+                else -> Color.LightGray
+            }
         )
     ) {
-        val time= bookingViewModel.getTime(slotNo%36);
-
+        val time = bookingViewModel.getTime(slotNo % 36)
         Text(
-            text =String.format("%.2f",time)
+            text = String.format("%.2f", time)
         )
     }
 }

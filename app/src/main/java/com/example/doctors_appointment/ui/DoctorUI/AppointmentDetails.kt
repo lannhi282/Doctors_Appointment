@@ -52,31 +52,20 @@ fun DoctorAppointmentDetails(
     doctorViewModel: DoctorViewModel,
 ) {
 
-    val appointment = Appointment().apply {
+//    val appointment = Appointment().apply {
+//
+//        // Assign values to appointment properties
+//        prescription = Prescription() // Assuming you have a Prescription class
+//        appointmentDate =
+//            System.currentTimeMillis() // Example appointment date as current time in milliseconds
+//        status = "Scheduled" // Example status
+//        rating = 0 // Example initial rating
+//        review = "" // Empty review initially
+//        notes = "Follow up in 2 weeks" // Example appointment notes
+//    }
 
-        // Assign values to appointment properties
-        prescription = Prescription() // Assuming you have a Prescription class
-        appointmentDate =
-            System.currentTimeMillis() // Example appointment date as current time in milliseconds
-        status = "Scheduled" // Example status
-        rating = 0 // Example initial rating
-        review = "" // Empty review initially
-        notes = "Follow up in 2 weeks" // Example appointment notes
-    }
-
-    val patient = Patient().apply {
-        name = "Md. Minhajul Haque"
-        email = "minhajul331047@gmail.com"
-        password = "password123"
-        contactNumber = "1234567890" // Example contact number
-        notification = true // Example notification setting
-        height = 175.5 // Example height in centimeters
-        weight = 70.0 // Example weight in kilograms
-        gender = true // Example gender (true for male, false for female)
-        dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
-        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
-    }
-
+    doctorViewModel.getAppointment()
+    val appointment = doctorViewModel.appointment
 
 
     Column(
@@ -137,19 +126,20 @@ fun PatientProfile(
     doctorViewModel: DoctorViewModel
 ) {
 
-    val patient = Patient().apply {
-        name = "lam"
-        email = "lam@gmail.com"
-        password = "lamlt123@"
-        contactNumber = "1234567890" // Example contact number
-        notification = true // Example notification setting
-        height = 175.0 // Example height in centimeters
-        weight = 56.0 // Example weight in kilograms
-        gender = true // Example gender (true for male, false for female)
-        dateOfBirth = "2005-11-18" // Example date of birth in yyyy-MM-dd format
-        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
-    }
+//    val patient = Patient().apply {
+//        name = "lam"
+//        email = "lam@gmail.com"
+//        password = "lamlt123@"
+//        contactNumber = "1234567890" // Example contact number
+//        notification = true // Example notification setting
+//        height = 175.0 // Example height in centimeters
+//        weight = 56.0 // Example weight in kilograms
+//        gender = true // Example gender (true for male, false for female)
+//        dateOfBirth = "2005-11-18" // Example date of birth in yyyy-MM-dd format
+//        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
+//    }
 
+    val patient = doctorViewModel.patientSelected
 
 
     Column(

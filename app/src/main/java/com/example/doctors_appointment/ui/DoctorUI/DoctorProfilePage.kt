@@ -1,5 +1,7 @@
 package com.example.doctors_appointment.ui
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -57,11 +60,13 @@ import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo500
 import com.example.doctors_appointment.ui.theme.Indigo900
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.navigation.NavController
 import com.example.doctors_appointment.data.model.Doctor
@@ -82,6 +87,14 @@ fun DoctorProfilePage(
     onSignOut: () -> Unit,
     doctorViewModel: DoctorViewModel
 ) {
+
+    val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
+
+    LaunchedEffect(Unit) {
+        doctorViewModel.fetchProfileImageAsBitmap { bitmap ->
+            bitmapState.value = bitmap
+        }
+    }
 
     var onEdit by remember {
         mutableStateOf(false)
@@ -168,10 +181,22 @@ fun DoctorProfilePage(
             verticalArrangement = Arrangement.Center,
 
             ) {
-            RoundImage(
-                image = painterResource(id = R.drawable.man),
-                modifier = Modifier.height(80.dp)
-            )
+            if (bitmapState.value != null) {
+                Image(
+                    bitmap = bitmapState.value!!.asImageBitmap(),
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                )
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.man),
+                    contentDescription = "Avatar",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             var filledName by remember {
                 mutableStateOf(doctorViewModel.user.name)

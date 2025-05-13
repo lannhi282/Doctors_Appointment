@@ -110,7 +110,7 @@ fun NavBar(highNavController: NavHostController) {
         repository,
         navController = navController
     )
-    val bookingViewModel = BookingViewModel(repository, othersViewModel)
+    val bookingViewModel = BookingViewModel(repository)
 
     Scaffold(
         bottomBar = {
@@ -205,7 +205,9 @@ fun NavBar(highNavController: NavHostController) {
             composable(
                 route = Screen.finalBooking.route
             ){
-                FinalBooking(navController = navController, bookingViewModel = bookingViewModel)
+                FinalBooking(navController = navController,
+                    bookingViewModel = bookingViewModel,
+                    othersViewModel = othersViewModel)
             }
         }
 

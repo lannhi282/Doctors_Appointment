@@ -1,5 +1,6 @@
 package com.example.doctors_appointment.ui.patientsUI.booking
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,11 +26,13 @@ import com.example.doctors_appointment.ui.patientsUI.mainHome.fontInria
 import com.example.doctors_appointment.ui.theme.Indigo50
 import com.example.doctors_appointment.ui.theme.Indigo900
 import com.example.doctors_appointment.ui.patientsUI.viewmodels.BookingViewModel
+import com.example.doctors_appointment.ui.patientsUI.viewmodels.OthersViewModel
 
 @Composable
 fun FinalBooking(
     navController: NavController,
     bookingViewModel: BookingViewModel,
+    othersViewModel: OthersViewModel
 ) {
 
     val appointment = bookingViewModel.appointment
@@ -67,9 +70,15 @@ fun FinalBooking(
 
         OutlinedButton(
             onClick = {
-                bookingViewModel.onConfirm()
-                bookingViewModel.othersViewModel.refreshAppointments()
-                navController.navigate(Screen.appointment.route)
+                bookingViewModel.onConfirm(
+                    onSuccess = {
+                        othersViewModel.refreshAppointments()
+                        navController.navigate(Screen.appointment.route)
+                    },
+                    onFail = { errorMessage ->
+                        Log.e("CONFIRM", errorMessage)
+                    }
+                )
             }
         ) {
             Text(

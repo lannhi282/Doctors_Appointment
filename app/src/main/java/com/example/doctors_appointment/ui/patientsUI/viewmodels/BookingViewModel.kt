@@ -18,11 +18,11 @@ import java.util.Calendar
 import java.util.Date
 
 class BookingViewModel(
-    private val repository: FirestoreRepository,
-    val othersViewModel: OthersViewModel
+    private val repository: FirestoreRepository
 ) : ViewModel() {
 
 
+    val bookedSlots = mutableStateOf<List<Long>>(emptyList())
     var doctor1 = Doctor()
     var user = MyApp.patient
     var appointment = Appointment()
@@ -113,10 +113,81 @@ class BookingViewModel(
         return number != number.toInt().toDouble()
     }
 
-    fun onConfirm() {
+    //    fun onConfirm() {
+//        viewModelScope.launch {
+//            repository.setAppointment(doctor1.id, user.id, appointment)
+//            appointment = Appointment()
+//
+//        }
+//    }
+//
+//}
+//    fun onConfirm(onSuccess: () -> Unit = {}) {
+//        viewModelScope.launch {
+//            repository.setAppointment(doctor1.id, user.id, appointment)
+//            appointment = Appointment()
+//            onSuccess()
+//        }
+//    }
+
+    fun onConfirm(onSuccess: () -> Unit = {}, onFail: (String) -> Unit = {}) {
         viewModelScope.launch {
-            repository.setAppointment(doctor1.id, user.id, appointment)
-            appointment = Appointment()
+            val time = appointment.appointmentDate
+            if (time == null) {
+                onFail("Vui lòng chọn thời gian hợp lệ.")
+                return@launch
+            }
+
+            val isTaken = repository.isAppointmentSlotTaken(doctor1.id, time)
+
+            if (isTaken) {
+                onFail("Khung giờ này đã có người đặt. Vui lòng chọn slot khác.")
+            } else {
+                repository.setAppointment(doctor1.id, user.id, appointment)
+
+                // ✅ Cập nhật nhanh bookedSlots để hiển thị ngay lập tức
+                bookedSlots.value = bookedSlots.value + time
+
+                appointment = Appointment()
+                onSuccess()
+            }
+        }
+    }
+
+    fun fetchBookedSlotsForDoctor(doctorId: String, date: Date) {
+        viewModelScope.launch {
+            val calendar = Calendar.getInstance().apply {
+                time = date
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+
+            val baseDateMillis = calendar.timeInMillis
+
+            // Kiểm tra tất cả 36 slot trong ngày
+            val slots = (0..35).map { slot ->
+                val time = getTime(slot)
+                val hour = time.toInt()
+                val minute = ((time - hour) * 100).toInt()
+
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                calendar.timeInMillis
+            }
+
+            // Lấy các appointment bị trùng
+            val taken = mutableListOf<Long>()
+            for (time in slots) {
+                if (repository.isAppointmentSlotTaken(doctorId, time)) {
+                    taken.add(time)
+                }
+            }
+            bookedSlots.value = taken
         }
     }
 

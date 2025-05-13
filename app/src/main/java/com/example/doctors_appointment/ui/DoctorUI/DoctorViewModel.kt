@@ -1,11 +1,15 @@
 package com.example.doctors_appointment.ui.DoctorUI
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.doctors_appointment.MyApp
+import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Doctor
 import com.example.doctors_appointment.data.model.Patient
 import com.example.doctors_appointment.data.repository.FirestoreRepository
@@ -15,11 +19,13 @@ import com.example.doctors_appointment.util.Screen
 import com.example.doctors_appointment.util.UiEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Blob
+import com.google.firebase.firestore.FirebaseFirestore
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 
 class DoctorViewModel(
@@ -28,22 +34,23 @@ class DoctorViewModel(
 ) : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
+    var appointment = Appointment()
+    var slotSelected = -1
+        private set(value) { // Custom setter with backing field
+            if (value in 0..35 || value == -1) { // Validate slot range or reset
+                field = value // Use the backing field
+                Log.d("DoctorViewModel", "Updated slotSelected to: $value from ${callerSource ?: "unknown"} at time ${System.currentTimeMillis()}")
+            } else {
+                Log.w("DoctorViewModel", "Invalid slotNo: $value, ignoring update")
+            }
+        }
+    private var callerSource: String? = null // Track the source of the update
+
+    val bookedSlots = mutableStateOf<List<Long>>(emptyList())
     var user = MyApp.doctor
     var selectedDate = mutableStateOf(Date())
-    val defaultPatient = Patient().apply {
-        name = "John Doe"
-        email = "john.doe@example.com"
-        password = "password123"
-        contactNumber = "1234567890" // Example contact number
-        notification = true // Example notification setting
-        height = 175.5 // Example height in centimeters
-        weight = 70.0 // Example weight in kilograms
-        gender = true // Example gender (true for male, false for female)
-        dateOfBirth = "1990-01-01" // Example date of birth in yyyy-MM-dd format
-        profileImage = Blob.fromBytes(byteArrayOf()) // Example path to profile image
-    }
+    var patientSelected = Patient()
     var patientList = mutableStateOf<List<Patient>>(listOf())
-
     var newDoctor = Doctor().apply {
         id = user.id
         name = user.name
@@ -54,119 +61,150 @@ class DoctorViewModel(
         gender = user.gender
         address = user.address
         rating = user.rating
-        reviews = user.reviews // Adding all elements from user's reviews to newDoctor's reviews
+        reviews = user.reviews
         bmdcRegistrationNumber = user.bmdcRegistrationNumber
-        qualifications = user.qualifications // Adding all elements from user's qualifications to newDoctor's qualifications
+        qualifications = user.qualifications
         about = user.about
         medicalSpecialty = user.medicalSpecialty
         profileImage = user.profileImage
-        availabilityStatus = user.availabilityStatus // Adding all elements from user's availabilityStatus to newDoctor's availabilityStatus
+        availabilityStatus = user.availabilityStatus
         consultationFee = user.consultationFee
         experience = user.experience
-        docoument = user.docoument // Adding all elements from user's docoument to newDoctor's docoument
-        appointments = user.appointments // Adding all elements from user's appointments to newDoctor's appointments
+        docoument = user.docoument
+        appointments = user.appointments
     }
-
 
     private val _uiEvents = Channel<UiEvent>()
     val uiEvents = _uiEvents.receiveAsFlow()
 
     fun OnEvent(event: ProfileEvent) {
-        when (event) {
-            is ProfileEvent.EditEmail -> {
-                newDoctor.email = event.email
+        // ... (existing OnEvent logic)
+    }
+
+    fun getPatient(patientId: String) {
+        viewModelScope.launch {
+            if (patientId.isEmpty()) {
+                Log.w("DoctorViewModel", "Invalid patientId: $patientId, skipping patient fetch")
+                patientSelected = Patient() // Reset or set default patient
+                return@launch
             }
-
-            is ProfileEvent.EditGender -> {
-                println("inside edit gender")
-                newDoctor.gender = event.gender
-                assert(newDoctor.gender == event.gender)
-            }
-
-            is ProfileEvent.EditName -> {
-                newDoctor.name = event.name
-            }
-
-            is ProfileEvent.EditNumber -> {
-                newDoctor.contactNumber = event.contact
-            }
-
-            is ProfileEvent.EditNotificationStatus -> {
-                newDoctor.notification = event.notificationStatus
-            }
-
-            is ProfileEvent.AddQualification -> {
-                newDoctor.qualifications = realmListOf(event.qualification) /// change further
-            }
-
-            is ProfileEvent.EditAbout -> {
-                newDoctor.about = event.about
-            }
-
-            is ProfileEvent.EditBMDCNo -> {
-                newDoctor.bmdcRegistrationNumber = event.bmdcNo
-            }
-
-            is ProfileEvent.EditExperience -> {
-                newDoctor.experience = event.experience
-            }
-
-            is ProfileEvent.EditMedicalSpeciality -> {
-                newDoctor.medicalSpecialty = event.medicalSpeciality
-            }
-
-            is ProfileEvent.EditAddress -> {
-                newDoctor.address = event.address
-            }
-
-            is ProfileEvent.OnSave -> {
-                viewModelScope.launch {
-                    repository.updateDoctor(newDoctor)
-                    user = newDoctor
-                }
-            }
-
-
-            else -> {}
+            Log.d("DoctorViewModel", "Fetching patient with ID: $patientId")
+            val result = repository.getPatientById(patientId)
+            patientSelected = result ?: Patient() // Default to empty Patient if not found
         }
     }
 
-    init {
-//        val userId = auth.currentUser?.uid?:""
-//        loadPatientById(userId)
-    }
-
-//Lay thông tin của bệnh nhân
-//    fun loadPatient(time :) {
-//        viewModelScope.launch {
-//            try {
-////                val result = repository.getPatientById(patientId)
-////                patientState.value = result?: defaultPatient
-//                val appointmentList = getAppointmentsByTime(time)
-//                appointmentList.forEach { item ->
-//                    val patientId = item.patientId
-//                    val patient = getPatientById(patientId)
-//                    patientList.map
-//                }
-//            } catch (e: Exception) {
-//                println("Error fetching patient: ${e.message}")
-//            }
-//        }
-//    }
-
     fun signout(navController: NavController) {
         FirebaseAuth.getInstance().signOut()
-        MyApp.doctor = Doctor() // Reset
+        MyApp.doctor = Doctor()
         navController.navigate(Screen.signIn.route) {
             popUpTo(0) { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    private fun sendUiEvent(uiEvent: UiEvent) {  // sends flow throw the channel
-        viewModelScope.launch {   // this binds the lifecycle of coroutine with our viewmodel
+    private fun sendUiEvent(uiEvent: UiEvent) {
+        viewModelScope.launch {
             _uiEvents.send(uiEvent)
         }
+    }
+
+    fun selectSlot(slotNo: Int, source: String = "unknown") {
+        callerSource = source
+        slotSelected = slotNo // This will use the custom setter
+    }
+
+    fun getAppointment() {
+        viewModelScope.launch {
+            val date = getAppointmentTime(slotSelected)
+            Log.d("getAppointment", "Fetching appointment for slot: $slotSelected, Date: $date, Current slotSelected: $slotSelected, Source: getAppointment")
+            appointment = repository.getAppointmentDoctorIdandDate(user.id, date) ?: Appointment()
+            Log.d("getAppointment", "Doctor ID: ${user.id}, Requested date: $date")
+            if (appointment.id.isEmpty()) {
+                Log.w("getAppointment", "No appointment found, resetting appointment")
+            } else {
+                Log.d("getAppointment", "Appointment: ID=${appointment.id}, Date=${appointment.appointmentDate}, PatientID=${appointment.patientId}")
+                getPatient(appointment.patientId)
+            }
+        }
+    }
+
+    fun fetchBookedSlotsForDoctor(doctorId: String, date: Date) {
+        viewModelScope.launch {
+            resetSlotSelection()
+            val calendar = Calendar.getInstance().apply {
+                time = date
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+
+            val baseDateMillis = calendar.timeInMillis
+
+            val slots = (0..35).map { slot ->
+                val time = getTime(slot)
+                val hour = time.toInt()
+                val minute = ((time - hour) * 100).toInt()
+
+                calendar.set(Calendar.HOUR_OF_DAY, hour)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+
+                calendar.timeInMillis
+            }
+
+            val taken = mutableListOf<Long>()
+            for (time in slots) {
+                if (repository.isAppointmentSlotTaken(doctorId, time)) {
+                    taken.add(time)
+                }
+            }
+            bookedSlots.value = taken
+            Log.d("DoctorViewModel", "Fetched booked slots: $taken")
+        }
+    }
+
+    fun fetchProfileImageAsBitmap(onResult: (Bitmap?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("patients")
+            .document(user.id)
+            .get()
+            .addOnSuccessListener { doc ->
+                val blob = doc.get("profileImage") as? com.google.firebase.firestore.Blob
+                val bytes = blob?.toBytes()
+                if (bytes != null) {
+                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    onResult(bitmap)
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Firestore", "Lỗi khi lấy ảnh nhị phân: ${it.message}")
+                onResult(null)
+            }
+    }
+
+    fun getAppointmentTime(slotNo: Int): Long {
+        if (selectedDate.value == null) {
+            Log.e("getAppointmentTime", "Selected date is null")
+            return 0L
+        }
+        Log.d("getAppointmentTime", "Selected date: ${selectedDate.value}, Slot: $slotNo")
+        val time = getTime(slotNo % 36)
+        val hour = time.toInt()
+        val minute = ((time - hour) * 100).toInt()
+
+        val calendar = Calendar.getInstance()
+        calendar.time = selectedDate.value
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        Log.d("getAppointmentTime", "Updated slotSelected: $slotNo, Time: ${calendar.time}, Millis: ${calendar.timeInMillis}")
+        return calendar.timeInMillis
     }
 
     fun getTime(slot: Int): Double {
@@ -210,6 +248,10 @@ class DoctorViewModel(
 
             else -> -1.0
         }
+    }
+
+    fun resetSlotSelection() {
+        selectSlot(-1, "resetSlotSelection")
     }
 
     fun signOut() {

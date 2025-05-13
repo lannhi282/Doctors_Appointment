@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -59,7 +59,6 @@ fun DoctorsPage(
 
     val doctors = othersViewModel.doctors
     var searchQuery by remember { mutableStateOf("") }
-    var minRating by remember { mutableStateOf(0f) }
 
     Box(
         modifier = Modifier
@@ -85,7 +84,7 @@ fun DoctorsPage(
                 onValueChange = { searchQuery = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 placeholder = { Text("Search doctors...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
                 shape = RoundedCornerShape(14.dp),
@@ -95,35 +94,35 @@ fun DoctorsPage(
                 )
             )
 
-            Row(
+            var minRating by remember { mutableStateOf(0f) }
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = Indigo900,
-                )
                 Text(
-                    text = String.format("%.0f+", minRating),
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    text = "Minimum Rating: ${String.format("%.0f", minRating)}",
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = Indigo900
                 )
                 Slider(
                     value = minRating,
                     onValueChange = { minRating = it },
-                    valueRange = 0f..5f,
-                    steps = 9,
-                    modifier = Modifier.weight(1f)
+                    valueRange = 1f..5f,
+                    colors = SliderDefaults.colors(
+                        thumbColor = Indigo500,
+                        activeTrackColor = Indigo400
+                    )
                 )
             }
-
             LazyColumn(
                 modifier = Modifier
                     .padding(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 65.dp)
             ){
-                items(doctors.value.filter { it.name.contains(searchQuery, ignoreCase = true) }){ doctor ->
+                items(doctors.value.filter {
+                    it.name.contains(searchQuery, ignoreCase = true) &&
+                            it.rating >= minRating
+                }){ doctor ->
                     DoctorsRow(doctor = doctor, navController)
                 }
             }
