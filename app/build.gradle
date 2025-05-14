@@ -47,7 +47,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md,NOTICE.md,DEPENDENCIES}'
         }
     }
 
@@ -120,6 +120,7 @@ dependencies {
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
 
     implementation("io.coil-kt:coil-compose:2.4.0")
-
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
 }
 apply plugin: 'com.google.gms.google-services'

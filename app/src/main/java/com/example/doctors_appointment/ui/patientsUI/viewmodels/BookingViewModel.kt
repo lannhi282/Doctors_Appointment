@@ -7,13 +7,8 @@ import com.example.doctors_appointment.MyApp
 import com.example.doctors_appointment.data.model.Appointment
 import com.example.doctors_appointment.data.model.Doctor
 import com.example.doctors_appointment.data.repository.FirestoreRepository
-import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.doctors_appointment.services.MailSender
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 
@@ -21,32 +16,22 @@ class BookingViewModel(
     private val repository: FirestoreRepository
 ) : ViewModel() {
 
-
     val bookedSlots = mutableStateOf<List<Long>>(emptyList())
     var doctor1 = Doctor()
     var user = MyApp.patient
     var appointment = Appointment()
     var selectedDate = mutableStateOf(Date())
-    fun getDoctorFromId(userId: String) {
 
+    fun getDoctorFromId(userId: String) {
         viewModelScope.launch {
             doctor1 = repository.getDoctorById(userId)!!
         }
     }
 
-//    fun getAppointmentFromId(userId: String){
-//
-//        viewModelScope.launch {
-//            appointment = repository.getAppointmentFromId(userId)!!
-//        }
-//    }
-
-    fun setDateTime(slotNo: Int): Appointment{
-
+    fun setDateTime(slotNo: Int): Appointment {
         appointment.apply {
-            appointment.appointmentDate = getAppointmentTime(slotNo)
+            appointmentDate = getAppointmentTime(slotNo)
         }
-
         return appointment
     }
 
@@ -65,46 +50,14 @@ class BookingViewModel(
         return calendar.timeInMillis
     }
 
-
     fun getTime(slot: Int): Double {
         return when (slot) {
-            0 -> 10.00
-            1 -> 10.10
-            2 -> 10.20
-            3 -> 10.30
-            4 -> 10.40
-            5 -> 10.50
-            6 -> 11.00
-            7 -> 11.10
-            8 -> 11.20
-            9 -> 11.30
-            10 -> 11.40
-            11 -> 11.50
-            12->12.00
-            13->12.10
-            14->12.20
-            15->12.30
-            16->12.40
-            17->12.50
-            18->2.00
-            19->2.10
-            20->2.20
-            21->2.30
-            22->2.40
-            23->2.50
-            24->3.00
-            25->3.10
-            26->3.20
-            27->3.30
-            28->3.40
-            29->3.50
-            30->4.00
-            31->4.10
-            32->4.20
-            33->4.30
-            34->4.40
-            35->4.50
-
+            0 -> 10.00; 1 -> 10.10; 2 -> 10.20; 3 -> 10.30; 4 -> 10.40; 5 -> 10.50
+            6 -> 11.00; 7 -> 11.10; 8 -> 11.20; 9 -> 11.30; 10 -> 11.40; 11 -> 11.50
+            12 -> 12.00; 13 -> 12.10; 14 -> 12.20; 15 -> 12.30; 16 -> 12.40; 17 -> 12.50
+            18 -> 14.00; 19 -> 14.10; 20 -> 14.20; 21 -> 14.30; 22 -> 14.40; 23 -> 14.50
+            24 -> 15.00; 25 -> 15.10; 26 -> 15.20; 27 -> 15.30; 28 -> 15.40; 29 -> 15.50
+            30 -> 16.00; 31 -> 16.10; 32 -> 16.20; 33 -> 16.30; 34 -> 16.40; 35 -> 16.50
             else -> -1.0
         }
     }
@@ -112,23 +65,6 @@ class BookingViewModel(
     fun hasFraction(number: Double): Boolean {
         return number != number.toInt().toDouble()
     }
-
-    //    fun onConfirm() {
-//        viewModelScope.launch {
-//            repository.setAppointment(doctor1.id, user.id, appointment)
-//            appointment = Appointment()
-//
-//        }
-//    }
-//
-//}
-//    fun onConfirm(onSuccess: () -> Unit = {}) {
-//        viewModelScope.launch {
-//            repository.setAppointment(doctor1.id, user.id, appointment)
-//            appointment = Appointment()
-//            onSuccess()
-//        }
-//    }
 
     fun onConfirm(onSuccess: () -> Unit = {}, onFail: (String) -> Unit = {}) {
         viewModelScope.launch {
@@ -139,19 +75,57 @@ class BookingViewModel(
             }
 
             val isTaken = repository.isAppointmentSlotTaken(doctor1.id, time)
-
             if (isTaken) {
                 onFail("Khung giờ này đã có người đặt. Vui lòng chọn slot khác.")
             } else {
                 repository.setAppointment(doctor1.id, user.id, appointment)
 
-                // ✅ Cập nhật nhanh bookedSlots để hiển thị ngay lập tức
                 bookedSlots.value = bookedSlots.value + time
+
+                // Gửi email xác nhận
+                sendConfirmationEmail()
 
                 appointment = Appointment()
                 onSuccess()
             }
         }
+    }
+
+    private fun sendConfirmationEmail() {
+        val email = user.email ?: return
+        val patientName = user.name ?: "bạn"
+        val doctorName = doctor1.name ?: "bác sĩ"
+        val timeString = appointment.appointmentDate?.let { Date(it).toString() } ?: "không rõ thời gian"
+
+        val subject = "✅ Xác nhận lịch hẹn khám bệnh tại Doctors Appointment"
+
+        val body = """
+        Kính gửi $patientName,
+
+        Chúng tôi xin xác nhận bạn đã đặt lịch hẹn thành công với $doctorName.
+
+        🕒 Thời gian: $timeString
+        👨‍⚕️ Bác sĩ: $doctorName
+
+        Vui lòng có mặt trước giờ hẹn 10 phút để được phục vụ tốt nhất.
+
+        Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua email hoặc hotline.
+
+        Trân trọng,
+        📍 Hệ thống đặt lịch Doctors Appointment
+    """.trimIndent()
+
+        Thread {
+            try {
+                val sender = MailSender(
+                    senderEmail = "Phamlannhi2005@gmail.com", // Gmail hệ thống
+                    senderPassword = "cynt etmj iwcq wvdi"     // App Password
+                )
+                sender.sendMail(email, subject, body)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }.start()
     }
 
     fun fetchBookedSlotsForDoctor(doctorId: String, date: Date) {
@@ -164,9 +138,6 @@ class BookingViewModel(
                 set(Calendar.MILLISECOND, 0)
             }
 
-            val baseDateMillis = calendar.timeInMillis
-
-            // Kiểm tra tất cả 36 slot trong ngày
             val slots = (0..35).map { slot ->
                 val time = getTime(slot)
                 val hour = time.toInt()
@@ -180,7 +151,6 @@ class BookingViewModel(
                 calendar.timeInMillis
             }
 
-            // Lấy các appointment bị trùng
             val taken = mutableListOf<Long>()
             for (time in slots) {
                 if (repository.isAppointmentSlotTaken(doctorId, time)) {
@@ -190,5 +160,4 @@ class BookingViewModel(
             bookedSlots.value = taken
         }
     }
-
 }
