@@ -213,6 +213,27 @@ class OthersViewModel(
         auth.signOut()
         navController.navigate(Screen.signIn.route)
     }
+    var appointmentToDelete = mutableStateOf<Appointment?>(null)
+    var showDeleteDialog = mutableStateOf(false)
+
+    fun requestDeleteAppointment(appointment: Appointment) {
+        appointmentToDelete.value = appointment
+        showDeleteDialog.value = true
+    }
+
+    fun confirmDeleteAppointment() {
+        appointmentToDelete.value?.let {
+            deleteAppointment(it)
+            appointmentToDelete.value = null
+        }
+        showDeleteDialog.value = false
+    }
+
+    fun cancelDeleteAppointment() {
+        appointmentToDelete.value = null
+        showDeleteDialog.value = false
+    }
+
 
     fun deleteAppointment(appointment: Appointment) {
         viewModelScope.launch {

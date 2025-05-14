@@ -94,6 +94,7 @@ fun AppointmentPage(
                 else othersViewModel.pastAppointments.value
 
             items(appointments.size) { index ->
+
                 val appointment = appointments[index]
                 val doctor = othersViewModel.doctors.value.find { it.id == appointment.doctorId }
 
@@ -118,9 +119,7 @@ fun AppointmentPage(
                         ) {
                             IconButton(
                                 onClick = {
-                                    scope.launch {
-                                        othersViewModel.deleteAppointment(appointment)
-                                    }
+                                    othersViewModel.requestDeleteAppointment(appointment)
                                 },
                                 modifier = Modifier.padding(bottom = 4.dp)
                             ) {
@@ -149,6 +148,23 @@ fun AppointmentPage(
                     }
                 }
             }
+        }
+        if (othersViewModel.showDeleteDialog.value) {
+            AlertDialog(
+                onDismissRequest = { othersViewModel.cancelDeleteAppointment() },
+                title = { Text("Xác nhận xoá lịch hẹn") },
+                text = { Text("Bạn có chắc chắn muốn xoá lịch hẹn này không?") },
+                confirmButton = {
+                    TextButton(onClick = { othersViewModel.confirmDeleteAppointment() }) {
+                        Text("Xoá", color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { othersViewModel.cancelDeleteAppointment() }) {
+                        Text("Huỷ")
+                    }
+                }
+            )
         }
     }
 }
